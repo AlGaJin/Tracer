@@ -1,8 +1,29 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
-    <!-- Base application theme. -->
     <style name="Base.Theme.Tracer" parent="Theme.Material3.DayNight.NoActionBar">
-        <!-- Customize your light theme here. -->
-        <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
+        <item name="logo_picture">@drawable/logo1</item>
+
+        <item name="android:windowBackground">@color/primaryLight</item>
+        <item name="colorPrimary">@color/primaryLight</item>
+        <item name="colorPrimaryDark">@color/primaryDark</item>
+        <item name="colorAccent">@color/lightAccent</item>
+
+        <item name="android:navigationBarColor">@color/primaryDark</item>
+        <item name="android:textColor">@color/primaryDark</item>
+        <item name="materialDividerStyle">@style/MyDivider</item>
+        <item name="android:textColorHint">@color/shadow</item>
+    </style>
+
+    <style name="MyCheckBox" parent="">
+        <item name="colorPrimary">@color/lightAccent</item>
+        <item name="colorOnPrimary">@color/primaryDark</item>
+    </style>
+
+    <style name="MyDivider" parent="Widget.MaterialComponents.MaterialDivider">
+        <item name="android:background">@color/primaryDark</item>
+    </style>
+
+    <style name="ThatOrThatIHate" parent="">
+        <item name="android:textColor">@color/primaryDark</item>
     </style>
 
     <style name="Theme.Tracer" parent="Base.Theme.Tracer" />

@@ -1,3 +1,13 @@
 <resources>
     <string name="app_name">Tracer</string>
+    <string name="email">Email</string>
+    <string name="user">User</string>
+    <string name="password">Password</string>
+    <string name="confirm_password">Confirm password</string>
+    <string name="sign_up">Sign up</string>
+    <string name="or">OR</string>
+    <string name="already_have_an_account">"Already have an account? "</string>
+    <string name="log_in">Log in</string>
+    <string name="dont_have_an_account">"Don't have an account? "</string>
+    <string name="username">Username</string>
 </resources>

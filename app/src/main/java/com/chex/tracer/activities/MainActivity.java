@@ -1,8 +1,10 @@
-package com.chex.tracer;
+package com.chex.tracer.activities;
 
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
+
+import com.chex.tracer.R;
 
 public class MainActivity extends AppCompatActivity {
 
