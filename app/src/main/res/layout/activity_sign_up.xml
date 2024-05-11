@@ -26,7 +26,7 @@
             app:srcCompat="?attr/logo_picture" />
 
         <EditText
-            android:id="@+id/signUp_EmailEditTxt"
+            android:id="@+id/signUp_emailEditTxt"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="10sp"
@@ -37,7 +37,7 @@
             android:minHeight="48dp" />
 
         <EditText
-            android:id="@+id/signUP_UsernameEditTxt"
+            android:id="@+id/signUP_usernameEditTxt"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1"
@@ -47,7 +47,7 @@
             android:minHeight="48dp" />
 
         <EditText
-            android:id="@+id/signUP_PwdEditTxt"
+            android:id="@+id/signUp_pwdEditTxt"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:ems="10"
@@ -56,18 +56,8 @@
             android:inputType="textPassword"
             android:minHeight="48dp" />
 
-        <EditText
-            android:id="@+id/confirmPwdEditTxt"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="10sp"
-            android:ems="10"
-            android:hint="@string/confirm_password"
-            android:inputType="textPassword"
-            android:minHeight="48dp" />
-
         <Button
-            android:id="@+id/signUp_SignUpBtn"
+            android:id="@+id/signUp_signUpBtn"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:backgroundTint="@color/lightAccent"
@@ -116,7 +106,7 @@
                 android:textSize="15sp"
                 android:text="@string/already_have_an_account" />
             <TextView
-                android:id="@+id/signUp_LogIn"
+                android:id="@+id/signUp_toLogIn"
                 style="@style/ThatOrThatIHate"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"

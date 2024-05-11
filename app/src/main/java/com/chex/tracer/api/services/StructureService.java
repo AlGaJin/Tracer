@@ -1,7 +1,7 @@
 package com.chex.tracer.api.services;
 
 public abstract class StructureService {
-    public static final String BASE_URL = "http://localhost:8000/";
+    public static final String BASE_URL = "https://tracer-apirest.vercel.app/";
 
     //COMMONS
     private static final String DELETE = "delete/{id}/";

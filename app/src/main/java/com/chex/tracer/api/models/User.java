@@ -2,7 +2,7 @@ package com.chex.tracer.api.models;
 
 import java.sql.Blob;
 
-public class User {
+public class User{
     private int id;
     private String username;
     private String email;

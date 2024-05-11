@@ -11,4 +11,9 @@
     <string name="log_in">Iniciar sesión</string>
     <string name="dont_have_an_account">"¿No tienes una cuenta? "</string>
     <string name="username">Nombre de usuario</string>
+    <string name="empty_fields">Rellene todos los campos</string>
+    <string name="invalid_login">Usuario o contraseña incorrectos</string>
+    <string name="error">Se ha producido un error inesperado</string>
+    <string name="invalid_email_format">No es un formato de correo válido</string>
+    <string name="not_available">No está disponible</string>
 </resources>
