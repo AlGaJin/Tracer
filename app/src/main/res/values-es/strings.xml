@@ -1,6 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Tracer</string>
+    <string name="open_nav">Abrir Navigation Drawer</string>
+    <string name="close_nav">Cerrar Navigation Drawer</string>
+
     <string name="email">Correo electrónico</string>
     <string name="user">Usuario</string>
     <string name="password">Contraseña</string>
@@ -16,4 +19,7 @@
     <string name="error">Se ha producido un error inesperado</string>
     <string name="invalid_email_format">No es un formato de correo válido</string>
     <string name="not_available">No está disponible</string>
+    <string name="videogames">Videojuegos</string>
+    <string name="lists">Listas</string>
+    <string name="reviews">Reseñas</string>
 </resources>

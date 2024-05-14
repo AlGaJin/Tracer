@@ -9,21 +9,27 @@
 
         <item name="android:navigationBarColor">@color/primaryDark</item>
         <item name="android:textColor">@color/primaryDark</item>
-        <item name="materialDividerStyle">@style/MyDivider</item>
         <item name="android:textColorHint">@color/shadow</item>
     </style>
 
-    <style name="MyCheckBox" parent="">
-        <item name="colorPrimary">@color/lightAccent</item>
-        <item name="colorOnPrimary">@color/primaryDark</item>
+    <style name="MyTabContainer" parent="">
+        <item name="android:background">@color/primaryLight</item>
+        <item name="android:elevation">3dp</item>
+
+        <item name="tabTextColor">@color/primaryDark</item>
+        <item name="tabSelectedTextColor">@color/darkAccent</item>
+
+        <item name="tabIndicatorColor">@color/darkAccent</item>
+        <item name="tabIndicatorHeight">1.5dp</item>
+        <item name="tabIndicatorFullWidth">true</item>
+        <item name="tabIndicatorAnimationMode">fade</item>
     </style>
 
-    <style name="MyDivider" parent="Widget.MaterialComponents.MaterialDivider">
-        <item name="android:background">@color/primaryDark</item>
-    </style>
-
-    <style name="ThatOrThatIHate" parent="">
-        <item name="android:textColor">@color/primaryDark</item>
+    <style name="MySideNav" parent="">
+        <item name="android:background">@color/primaryLight</item>
+        <item name="itemBackground">@color/navigation_selector</item>
+        <item name="itemIconTint">@color/text_selector</item>
+        <item name="itemTextColor">@color/text_selector</item>
     </style>
 
     <style name="Theme.Tracer" parent="Base.Theme.Tracer" />

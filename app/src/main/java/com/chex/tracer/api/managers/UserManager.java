@@ -1,5 +1,7 @@
 package com.chex.tracer.api.managers;
 
+import android.util.Log;
+
 import com.chex.tracer.api.APICallBack;
 import com.chex.tracer.api.models.User;
 import com.chex.tracer.api.services.StructureService;

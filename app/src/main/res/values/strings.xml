@@ -1,5 +1,8 @@
 <resources>
     <string name="app_name">Tracer</string>
+    <string name="open_nav">Open Navigation Drawer</string>
+    <string name="close_nav">Close Navigation Drawer</string>
+
     <string name="email">Email</string>
     <string name="user">User</string>
     <string name="password">Password</string>
@@ -15,4 +18,8 @@
     <string name="error">Unexpected error has occurred</string>
     <string name="invalid_email_format">Invalid email format</string>
     <string name="not_available">It is not available</string>
+
+    <string name="videogames">Videogames</string>
+    <string name="lists">Lists</string>
+    <string name="reviews">Reviews</string>
 </resources>

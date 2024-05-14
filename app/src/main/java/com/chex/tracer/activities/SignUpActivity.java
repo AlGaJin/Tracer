@@ -92,7 +92,7 @@ public class SignUpActivity extends AppCompatActivity {
                                 SharedPreferences.Editor editor = preferences.edit();
                                 editor.putString("userId", userId);
                                 editor.apply();
-                                
+
                                 changeActivity(MainActivity.class);
                                 break;
                         }
@@ -101,7 +101,7 @@ public class SignUpActivity extends AppCompatActivity {
 
                 @Override
                 public void onError() {
-
+                    Toast.makeText(SignUpActivity.this, "Noway:C", Toast.LENGTH_SHORT).show();
                 }
             });
         }

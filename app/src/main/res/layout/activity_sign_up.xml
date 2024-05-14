@@ -70,14 +70,14 @@
             android:orientation="horizontal">
 
             <com.google.android.material.divider.MaterialDivider
-                style="@style/MyDivider"
+                app:dividerColor="?android:attr/textColor"
                 android:layout_width="0dp"
                 android:layout_height="1dp"
                 android:layout_gravity="center"
                 android:layout_weight="1" />
 
             <TextView
-                style="@style/ThatOrThatIHate"
+                android:textColor="?android:attr/textColor"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="5sp"
@@ -87,7 +87,7 @@
                 android:text="@string/or" />
 
             <com.google.android.material.divider.MaterialDivider
-                style="@style/MyDivider"
+                app:dividerColor="?android:attr/textColor"
                 android:layout_width="0dp"
                 android:layout_height="1dp"
                 android:layout_gravity="center"
@@ -107,7 +107,11 @@
                 android:text="@string/already_have_an_account" />
             <TextView
                 android:id="@+id/signUp_toLogIn"
-                style="@style/ThatOrThatIHate"
+                android:textColor="?attr/colorAccent"
+                android:shadowColor="@color/darkAccent"
+                android:shadowDx="1"
+                android:shadowDy="1"
+                android:shadowRadius="3"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textSize="16sp"
