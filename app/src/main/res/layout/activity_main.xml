@@ -8,7 +8,7 @@
     android:id="@+id/drawer_layout"
     tools:openDrawer="start"
     tools:context=".activities.MainActivity">
-    
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -19,7 +19,19 @@
             android:layout_height="56dp"
             android:id="@+id/toolbar"
             android:elevation="4dp"
-            android:popupTheme="@style/ThemeOverlay.AppCompat.Light"/>
+            android:popupTheme="@style/ThemeOverlay.AppCompat.Light">
+
+            <ImageView
+                android:id="@+id/toolbar_userProfilePic"
+                android:contentDescription="@string/content_descr_user_profile_pic"
+                android:padding="8dp"
+                android:layout_width="56dp"
+                android:layout_height="56dp"
+                android:src="@drawable/avatar_default"
+                android:scaleType="centerCrop"
+                android:layout_gravity="end"
+                android:clickable="true"/>
+        </androidx.appcompat.widget.Toolbar>
 
         <FrameLayout
             android:layout_width="match_parent"
@@ -27,12 +39,23 @@
             android:id="@+id/fragment_container"/>
     </LinearLayout>
 
+    <ProgressBar
+        android:id="@+id/main_pb"
+        style="?android:attr/progressBarStyle"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="?android:attr/colorPrimary"
+
+        android:padding="150dp"
+        android:visibility="visible" />
+
     <com.google.android.material.navigation.NavigationView
+        android:id="@+id/nav_view"
+        style="@style/MySideNav"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
-        android:id="@+id/nav_view"
         android:layout_gravity="start"
         app:headerLayout="@layout/nav_header"
-        app:menu="@menu/side_nav_menu"
-        style="@style/MySideNav"/>
+        app:menu="@menu/side_nav_menu" />
+
 </androidx.drawerlayout.widget.DrawerLayout>

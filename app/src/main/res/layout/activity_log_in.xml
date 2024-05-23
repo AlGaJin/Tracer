@@ -49,9 +49,8 @@
             android:id="@+id/login_loginBtn"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:backgroundTint="@color/lightAccent"
-            android:text="@string/log_in"
-            android:textColor="@color/primaryDark" />
+            style="@style/MyBtnStyle"
+            android:text="@string/log_in" />
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -97,11 +96,10 @@
                 android:text="@string/dont_have_an_account" />
             <TextView
                 android:id="@+id/login_signUp"
-                android:textColor="?attr/colorAccent"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textSize="16sp"
-                android:textStyle="bold"
+                style="@style/HighLightText"
                 android:text="@string/sign_up" />
         </LinearLayout>
 

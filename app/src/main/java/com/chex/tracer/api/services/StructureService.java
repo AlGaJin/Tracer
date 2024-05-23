@@ -8,9 +8,18 @@ public abstract class StructureService {
 
     //USER
     public static final String BASE_USER = "user/";
-    public static final String GET_USER_BY_ID = BASE_USER + "{id}";
+    public static final String GET_USER_BY_ID = BASE_USER + "{id}/";
+    public static final String IS_USERNAME_AVAILABLE = BASE_USER + "isusernameavailable/{username}/";
+    public static final String IS_EMAIL_AVAILABLE = BASE_USER + "isemailavailable/{email}/";
     public static final String LOGIN = BASE_USER + "login/";
     public static final String SIGNUP = BASE_USER + "signup/";
+    public static final String SOCIAL_MEDIA_DATA = BASE_USER + "{id}/socialmediadata";
+    public static final String IS_FOLLOWING = BASE_USER + "isFollowing/";
+    public static final String EDIT_USER = BASE_USER + "edit/";
     public static final String DELETE_USER = BASE_USER + DELETE;
 
+    //VIDEOGAME
+    public static final String BASE_VG = "videogame/";
+    public static final String GET_LATEST_VG = BASE_VG + "latest/";
+    public static final String GET_VG_BY_ID = BASE_VG + "{id}/";
 }

@@ -8,6 +8,7 @@ public class Videogame {
     private Timestamp released;
     private String image;
     private int metacritic_rate;
+    private String descr;
 
     public Videogame(){}
 

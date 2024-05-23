@@ -1,15 +1,25 @@
 package com.chex.tracer.api.models;
 
-import java.sql.Blob;
+import androidx.annotation.NonNull;
 
-public class User{
+public class User implements Cloneable{
     private int id;
     private String username;
     private String email;
     private String descr;
-    private Blob profilePic;
+    private String profile_pic;
 
     public User(){}
+
+    @NonNull
+    @Override
+    public User clone() {
+        try {
+            return (User) super.clone();
+        } catch (CloneNotSupportedException e) {
+            throw new AssertionError();
+        }
+    }
 
     //Getter y Setters
     public int getId() {
@@ -44,12 +54,12 @@ public class User{
         this.descr = descr;
     }
 
-    public Blob getProfilePic() {
-        return profilePic;
+    public String getProfile_pic() {
+        return profile_pic;
     }
 
-    public void setProfilePic(Blob profilePic) {
-        this.profilePic = profilePic;
+    public void setProfile_pic(String profile_pic) {
+        this.profile_pic = profile_pic;
     }
 
     @Override
@@ -59,7 +69,7 @@ public class User{
                 ", username='" + username + '\'' +
                 ", email='" + email + '\'' +
                 ", descr='" + descr + '\'' +
-                ", profilePic=" + profilePic +
+                ", profilePic=" + profile_pic +
                 '}';
     }
 }

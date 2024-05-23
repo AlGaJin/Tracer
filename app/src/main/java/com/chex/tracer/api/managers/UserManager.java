@@ -1,7 +1,11 @@
 package com.chex.tracer.api.managers;
 
+import android.content.Context;
+import android.graphics.Bitmap;
+import android.util.Base64;
 import android.util.Log;
 
+import com.chex.tracer.activities.MainActivity;
 import com.chex.tracer.api.APICallBack;
 import com.chex.tracer.api.models.User;
 import com.chex.tracer.api.services.StructureService;
@@ -10,10 +14,15 @@ import com.chex.tracer.api.utils.NullOnEmptyConverterFactory;
 
 import org.json.JSONObject;
 
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.List;
 
 import okhttp3.MediaType;
+import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -21,24 +30,12 @@ import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
-public class UserManager {
-    private final Retrofit retrofit;
+public class UserManager extends BaseManager {
     private final UserService userService;
 
     public UserManager(){
-        retrofit = new Retrofit.Builder()
-                .baseUrl(StructureService.BASE_URL)
-                .addConverterFactory(new NullOnEmptyConverterFactory())
-                .addConverterFactory(GsonConverterFactory.create())
-                .build();
+        super();
         userService = retrofit.create(UserService.class);
-    }
-
-    private RequestBody createJSONRequestBody(JSONObject params){
-        return RequestBody.create(
-                MediaType.parse("application/json; charset=utf-8"),
-                params.toString()
-        );
     }
 
     private static String encryptPassword(String password) {
@@ -60,13 +57,57 @@ public class UserManager {
         }
     }
 
+    public void getUser(int id, final APICallBack callBack){
+        userService.getUserByID(id).enqueue(new Callback<User>() {
+            @Override
+            public void onResponse(Call<User> call, Response<User> response) {
+                callBack.onSuccess(response.body());
+            }
+
+            @Override
+            public void onFailure(Call<User> call, Throwable throwable) {
+                throwable.printStackTrace();
+                callBack.onError();
+            }
+        });
+    }
+
+    public void isUsernameAvailable(String username, final APICallBack callBack){
+        userService.isUsernameAvailable(username).enqueue(new Callback<Boolean>() {
+            @Override
+            public void onResponse(Call<Boolean> call, Response<Boolean> response) {
+                callBack.onSuccess(response.body());
+            }
+
+            @Override
+            public void onFailure(Call<Boolean> call, Throwable throwable) {
+                throwable.printStackTrace();
+                callBack.onError();
+            }
+        });
+    }
+
+    public void isEmailAvailable(String email, final APICallBack callBack){
+        userService.isEmailAvailable(email).enqueue(new Callback<Boolean>() {
+            @Override
+            public void onResponse(Call<Boolean> call, Response<Boolean> response) {
+                callBack.onSuccess(response.body());
+            }
+
+            @Override
+            public void onFailure(Call<Boolean> call, Throwable throwable) {
+                throwable.printStackTrace();
+                callBack.onError();
+            }
+        });
+    }
+
     public void login(String user, String pwd, final APICallBack callBack){
         try{
             JSONObject params = new JSONObject();
             params.put("user", user);
             params.put("pwd", encryptPassword(pwd));
-            Call<String> callUserLogin = userService.login(createJSONRequestBody(params));
-            callUserLogin.enqueue(new Callback<String>() {
+            userService.login(createJSONRequestBody(params)).enqueue(new Callback<String>() {
                 @Override
                 public void onResponse(Call<String> call, Response<String> response) {
                     callBack.onSuccess(response.body());
@@ -90,8 +131,7 @@ public class UserManager {
             params.put("email", email);
             params.put("pwd", encryptPassword(pwd));
 
-            Call<String> callUserSignup = userService.signup(createJSONRequestBody(params));
-            callUserSignup.enqueue(new Callback<String>() {
+            userService.signup(createJSONRequestBody(params)).enqueue(new Callback<String>() {
                 @Override
                 public void onResponse(Call<String> call, Response<String> response) {
                     callBack.onSuccess(response.body());
@@ -99,6 +139,73 @@ public class UserManager {
 
                 @Override
                 public void onFailure(Call<String> call, Throwable throwable) {
+                    throwable.printStackTrace();
+                    callBack.onError();
+                }
+            });
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+    }
+
+    public void getSocialMediaData(int userId, final APICallBack callBack){
+        userService.getSocialMediaDataFrom(userId).enqueue(new Callback<List<String>>() {
+            @Override
+            public void onResponse(Call<List<String>> call, Response<List<String>> response) {
+                callBack.onSuccess(response.body());
+            }
+
+            @Override
+            public void onFailure(Call<List<String>> call, Throwable throwable) {
+                throwable.printStackTrace();
+                callBack.onError();
+            }
+        });
+    }
+
+    public void updateUser(int userId, String newUsername, String newEmail, String descr, String newProfilePic,final APICallBack callBack){
+        try{
+            JSONObject params = new JSONObject();
+            params.put("id", userId);
+            if(!newUsername.isEmpty()) params.put("username", newUsername);
+            if(!newEmail.isEmpty()) params.put("email", newEmail);
+            params.put("descr", descr);
+            params.put("profile_pic", newProfilePic);
+            userService.editUser(createJSONRequestBody(params)).enqueue(new Callback<Boolean>() {
+                @Override
+                public void onResponse(Call<Boolean> call, Response<Boolean> response) {
+                    callBack.onSuccess(response.body());
+                }
+
+                @Override
+                public void onFailure(Call<Boolean> call, Throwable throwable) {
+                    throwable.printStackTrace();
+                    callBack.onError();
+                }
+            });
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+    }
+
+    public void isFollowing(int followerId, int followedId, final APICallBack callBack){
+        try{
+            JSONObject params = new JSONObject();
+            params.put("followerId", followerId);
+            params.put("followedId", followedId);
+
+            userService.isFollowing(createJSONRequestBody(params)).enqueue(new Callback<Boolean>() {
+                @Override
+                public void onResponse(Call<Boolean> call, Response<Boolean> response) {
+                    if(response.body() != null){
+                       callBack.onSuccess(response.body());
+                    }else{
+                        callBack.onSuccess(false);
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<Boolean> call, Throwable throwable) {
                     throwable.printStackTrace();
                     callBack.onError();
                 }

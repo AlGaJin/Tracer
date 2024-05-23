@@ -20,9 +20,7 @@
         <ImageView
             android:layout_width="match_parent"
             android:layout_height="200dp"
-            android:paddingStart="25dp"
-            android:paddingEnd="25dp"
-            android:paddingBottom="25dp"
+            android:paddingBottom="10dp"
             app:srcCompat="?attr/logo_picture" />
 
         <EditText
@@ -62,7 +60,9 @@
             android:layout_height="wrap_content"
             android:backgroundTint="@color/lightAccent"
             android:textColor="@color/primaryDark"
-            android:text="@string/sign_up" />
+            android:text="@string/sign_up"
+            android:outlineAmbientShadowColor="@color/primaryDark"
+            />
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -107,15 +107,10 @@
                 android:text="@string/already_have_an_account" />
             <TextView
                 android:id="@+id/signUp_toLogIn"
-                android:textColor="?attr/colorAccent"
-                android:shadowColor="@color/darkAccent"
-                android:shadowDx="1"
-                android:shadowDy="1"
-                android:shadowRadius="3"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                style="@style/HighLightText"
                 android:textSize="16sp"
-                android:textStyle="bold"
                 android:text="@string/log_in" />
         </LinearLayout>
     </LinearLayout>

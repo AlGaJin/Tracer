@@ -50,11 +50,39 @@ public class SignUpActivity extends AppCompatActivity {
         }else if(!Patterns.EMAIL_ADDRESS.matcher(email).matches()){
             emailEditTxt.setError(getText(R.string.invalid_email_format));
             allRight = false;
+        }else{
+            userManager.isEmailAvailable(email, new APICallBack() {
+                @Override
+                public void onSuccess(Object obj) {
+                    if(!(Boolean)obj){
+                        emailEditTxt.setError(getText(R.string.not_available));
+                    }
+                }
+
+                @Override
+                public void onError() {
+                    Toast.makeText(SignUpActivity.this, getResources().getText(R.string.something_goes_wrong), Toast.LENGTH_SHORT).show();
+                }
+            });
         }
 
         if(username.isEmpty()){
             usernameEditTxt.setError(getText(R.string.empty_fields));
             allRight = false;
+        }else{
+            userManager.isUsernameAvailable(username, new APICallBack() {
+                @Override
+                public void onSuccess(Object obj) {
+                    if(!(Boolean)obj){
+                        usernameEditTxt.setError(getText(R.string.not_available));
+                    }
+                }
+
+                @Override
+                public void onError() {
+                    Toast.makeText(SignUpActivity.this, getResources().getText(R.string.something_goes_wrong), Toast.LENGTH_SHORT).show();
+                }
+            });
         }
 
         if(pwd.isEmpty()){
@@ -81,27 +109,18 @@ public class SignUpActivity extends AppCompatActivity {
                 public void onSuccess(Object obj) {
                     String userId = (String) obj;
                     if(userId != null){
-                        switch (userId){
-                            case "-1":
-                                emailEditTxt.setError(getText(R.string.not_available));
-                                break;
-                            case "-2":
-                                usernameEditTxt.setError(getText(R.string.not_available));
-                                break;
-                            default:
-                                SharedPreferences.Editor editor = preferences.edit();
-                                editor.putString("userId", userId);
-                                editor.apply();
-
-                                changeActivity(MainActivity.class);
-                                break;
-                        }
+                        SharedPreferences.Editor editor = preferences.edit();
+                        editor.putString("userId", userId);
+                        editor.apply();
+                        changeActivity(MainActivity.class);
+                    }else{
+                        Toast.makeText(SignUpActivity.this, "Sí, está entrando :C", Toast.LENGTH_SHORT).show();
                     }
                 }
 
                 @Override
                 public void onError() {
-                    Toast.makeText(SignUpActivity.this, "Noway:C", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(SignUpActivity.this, getResources().getText(R.string.something_goes_wrong), Toast.LENGTH_SHORT).show();
                 }
             });
         }

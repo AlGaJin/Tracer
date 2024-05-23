@@ -4,8 +4,9 @@
     <color name="shadow">#9A000000</color>
     <color name="white">#FAF6F8</color>
     <color name="red">#D1000E</color>
-    <color name="primaryLight">#A16598</color>
+    <color name="primaryLight">#B08FB3</color>
     <color name="primaryDark">#33040E</color>
-    <color name="lightAccent">#FF6675</color>
+    <color name="lightAccent">#FF8090</color>
     <color name="darkAccent">#B62E3C</color>
+    <color name="burgundy">#751925</color>
 </resources>
