@@ -82,14 +82,18 @@ public class VideogameDetailFragment extends Fragment {
     private final ReviewManager reviewManager = new ReviewManager();
 
     private Videogame game;
+    private Review review;
+
+    private float averageRating;
+    private int totalRates;
     private boolean isCollapsed = true;
+
     private TextView titleTxtV, descrTxtV, releasedTxtV, metacriticTxtV, ratingTxtV, totalRatingsTxtV;
     private ImageView gameImgBackground, dropImgV, totalRatingsImgV;
     private MaterialDivider totalRatingsDivider;
     private LinearLayout platformLayout;
     private CircleProgress metacriticScore;
     private RatingBar ratingBar;
-    private float averageRating;
     private FloatingActionButton optionsFab;
     private BottomSheetDialog bottomSheetDialog;
     private CheckBox playedCheckBox, playingCheckBox, backlogCheckBox;
@@ -170,6 +174,174 @@ public class VideogameDetailFragment extends Fragment {
         return v;
     }
 
+    private void setGameData() {
+        if(game.getImage() != null){
+            ImageLoader imageLoader = Coil.imageLoader(requireContext());
+            ImageRequest request = new ImageRequest.Builder(requireContext()).data(game.getImage()).crossfade(true).target(gameImgBackground).build();
+            imageLoader.enqueue(request);
+        }
+
+        titleTxtV.setText(game.getTitle());
+
+        if(game.getDescr() != null){
+            Spanned markdownText = Markwon.create(requireContext()).toMarkdown(game.getDescr());
+            descrTxtV.setText(game.getDescr());
+            if(descrTxtV.getLineHeight() < MAX_LINES){
+                dropImgV.setVisibility(View.GONE);
+            }
+            descrTxtV.setText(markdownText);
+        }else{
+            dropImgV.setVisibility(View.GONE);
+        }
+
+        if(game.getReleased() != null){
+
+            releasedTxtV.setText(getYear(game.getReleased()));
+        }
+
+        if(game.getMetacritic_rate() != null){
+            metacriticScore.setProgress(game.getMetacritic_rate());
+            chooseColor();
+        }else{
+            metacriticTxtV.setVisibility(View.GONE);
+            metacriticScore.setVisibility(View.GONE);
+        }
+    }
+    private String getYear(Timestamp date){
+        Calendar calendar = new GregorianCalendar();
+        calendar.setTime(date);
+        return String.valueOf(calendar.get(Calendar.YEAR));
+    }
+    private void chooseColor() {
+        int score = game.getMetacritic_rate();
+
+        if(score < 50){
+            metacriticScore.setFinishedColor(getResources().getColor(R.color.lowScore, null));
+        }else if(score < 75){
+            metacriticScore.setFinishedColor(getResources().getColor(R.color.midScore, null));
+        }else{
+            metacriticScore.setFinishedColor(getResources().getColor(R.color.highScore, null));
+        }
+    }
+
+    private void collapsaitor(){
+        if(isCollapsed){
+            descrTxtV.setMaxLines(Integer.MAX_VALUE);
+            dropImgV.setImageDrawable(ResourcesCompat.getDrawable(getResources(), R.drawable.ui_drop_up, null));
+        }else{
+            descrTxtV.setMaxLines(MAX_LINES);
+            dropImgV.setImageDrawable(ResourcesCompat.getDrawable(getResources(), R.drawable.ui_drop_down, null));
+        }
+        isCollapsed = !isCollapsed;
+    }
+    private void applyLayoutTransition() {
+        LayoutTransition transition = new LayoutTransition();
+        transition.setDuration(325);
+        transition.enableTransitionType(LayoutTransition.CHANGING);
+        ((LinearLayout) descrTxtV.getParent()).setLayoutTransition(transition);
+    }
+
+    private void setGameOptionData() {
+        int userId = new ViewModelProvider(requireActivity()).get(UserViewModel.class).getLoggedUser().getId();
+        ((TextView) sheetView.findViewById(R.id.gop_titleGameTxtV)).setText(game.getTitle());
+        ((TextView) sheetView.findViewById(R.id.gop_releasedGameTxtV)).setText(getYear(game.getReleased()));
+        ratingBar = sheetView.findViewById(R.id.ratingBar);
+        playedCheckBox = sheetView.findViewById(R.id.playedCheckBox);
+        playingCheckBox = sheetView.findViewById(R.id.playingCheckBox);
+        backlogCheckBox = sheetView.findViewById(R.id.backlogCheckBox);
+
+        playedCheckBox.setOnClickListener(view ->{
+            if(ratingBar.getRating() > 0 && !playedCheckBox.isChecked()){
+                playedCheckBox.setChecked(true);
+                Toast.makeText(requireContext(), "Unrated the game if you don't have played", Toast.LENGTH_SHORT).show();
+            }
+            if(playingCheckBox.isChecked() && playedCheckBox.isChecked()){
+                playingCheckBox.setChecked(false);
+            }
+        });
+
+        playingCheckBox.setOnClickListener(view ->{
+            if(backlogCheckBox.isChecked() && playingCheckBox.isChecked()){
+                backlogCheckBox.setChecked(false);
+            }
+        });
+
+        ratingBar.setOnRatingBarChangeListener((ratingBar, v, b) -> {
+            float oldV = review.getRate();
+            if(v > 0){
+                playedCheckBox.setChecked(true);
+                if(v != oldV){
+                    updateChartValue(oldV, v);
+                }
+            }
+            review.setRate(v);
+        });
+
+        sheetView.findViewById(R.id.addReview).setOnClickListener(view ->{
+            Bundle bundle = new Bundle();
+            bundle.putParcelable("videogame", game);
+            bundle.putParcelable("review", review);
+            ((MainActivity)requireActivity()).changeFragmentWithBundle(2, bundle);
+            bottomSheetDialog.dismiss();
+        });
+
+        bottomSheetDialog.setOnDismissListener(dialogInterface -> {
+            userManager.updateGameData(userId, game.getId(),
+                playedCheckBox.isChecked(), playingCheckBox.isChecked(), backlogCheckBox.isChecked(), ratingBar.getRating());
+        });
+
+        userManager.getUserGameData(userId, game.getId(), new APICallBack() {
+            @Override
+            public void onSuccess(Object obj) {
+                if(obj != null){
+                    List<Boolean> states = (List<Boolean>) obj;
+                    playedCheckBox.setChecked(states.get(0));
+                    playingCheckBox.setChecked(states.get(1));
+                    backlogCheckBox.setChecked(states.get(2));
+                }
+            }
+
+            @Override
+            public void onError() {
+
+            }
+        });
+        reviewManager.getReview(game.getId(), userId, new APICallBack() {
+            @Override
+            public void onSuccess(Object obj) {
+                review = (Review) obj;
+                if(review != null){
+                    ratingBar.setRating(review.getRate());
+                }else{
+                    review = new Review();
+                }
+            }
+
+            @Override
+            public void onError() {}
+        });
+    }
+
+    private void updateChartValue(float oldV, float newV) {
+        //Recupero los datos de la grafica
+        BarData data = ratingBarChart.getData();
+        BarDataSet dataSet = (BarDataSet) data.getDataSetByIndex(0);
+
+        //Elimino la entrada antigua
+        Entry oldEntry = dataSet.getEntryForXValue(oldV, 0);
+        oldEntry.setY(oldEntry.getY()-1);
+        //Aumento la entrada nueva
+        Entry newEntry = dataSet.getEntryForXValue(newV, 0);
+        newEntry.setY(newEntry.getY()+1);
+
+        data.notifyDataChanged();
+        ratingBarChart.notifyDataSetChanged();
+        ratingBarChart.invalidate();
+
+        //Calculos para la nueva media
+        averageRating = averageRating+((newV-oldV)/totalRates);
+        ratingTxtV.setText(String.valueOf(averageRating));
+    }
     private void processRatings(List<Float> ratings) {
         try {
             Map<Float, Integer> ratingCounts = new HashMap<>();
@@ -184,6 +356,7 @@ public class VideogameDetailFragment extends Fragment {
             }
 
             if(!ratings.isEmpty()){
+                totalRates = ratings.size();
                 averageRating = totalRating / ratings.size();
             }
 
@@ -192,7 +365,7 @@ public class VideogameDetailFragment extends Fragment {
             List<BarEntry> entries = new ArrayList<>();
             for (float i = 0.5f; i <= 5; i = i+0.5f) {
                 if(ratingCounts.containsKey(i)){
-                    entries.add(new BarEntry(i, ratingCounts.get(i)));
+                    entries.add(new BarEntry(i, ratingCounts.get(i) + 0.01f));
                 }else{
                     entries.add(new BarEntry(i, 0.01f));
                 }
@@ -269,7 +442,6 @@ public class VideogameDetailFragment extends Fragment {
             e.printStackTrace();
         }
     }
-
     private void myOnSelected(float count, float rate){
         if (count >= 1) {
             ratingTxtV.setText(String.valueOf(rate));
@@ -281,152 +453,12 @@ public class VideogameDetailFragment extends Fragment {
             myOnNothingSelected();
         }
     }
-
     private void myOnNothingSelected(){
         ratingBarChart.highlightValue(null);
         totalRatingsImgV.setVisibility(View.GONE);
         totalRatingsTxtV.setVisibility(View.GONE);
         totalRatingsDivider.setVisibility(View.GONE);
         ratingTxtV.setText(String.valueOf(averageRating));
-    }
-
-    private void setGameData() {
-        if(game.getImage() != null){
-            ImageLoader imageLoader = Coil.imageLoader(requireContext());
-            ImageRequest request = new ImageRequest.Builder(requireContext()).data(game.getImage()).crossfade(true).target(gameImgBackground).build();
-            imageLoader.enqueue(request);
-        }
-
-        titleTxtV.setText(game.getTitle());
-
-        if(game.getDescr() != null){
-            Spanned markdownText = Markwon.create(requireContext()).toMarkdown(game.getDescr());
-            descrTxtV.setText(game.getDescr());
-            if(descrTxtV.getLineHeight() < MAX_LINES){
-                dropImgV.setVisibility(View.GONE);
-            }
-            descrTxtV.setText(markdownText);
-        }else{
-            dropImgV.setVisibility(View.GONE);
-        }
-
-        if(game.getReleased() != null){
-
-            releasedTxtV.setText(getYear(game.getReleased()));
-        }
-
-        if(game.getMetacritic_rate() != null){
-            metacriticScore.setProgress(game.getMetacritic_rate());
-            chooseColor();
-        }else{
-            metacriticTxtV.setVisibility(View.GONE);
-            metacriticScore.setVisibility(View.GONE);
-        }
-    }
-    private String getYear(Timestamp date){
-        Calendar calendar = new GregorianCalendar();
-        calendar.setTime(date);
-        return String.valueOf(calendar.get(Calendar.YEAR));
-    }
-    private void chooseColor() {
-        int score = game.getMetacritic_rate();
-
-        if(score < 50){
-            metacriticScore.setFinishedColor(getResources().getColor(R.color.lowScore, null));
-        }else if(score < 75){
-            metacriticScore.setFinishedColor(getResources().getColor(R.color.midScore, null));
-        }else{
-            metacriticScore.setFinishedColor(getResources().getColor(R.color.highScore, null));
-        }
-    }
-
-    private void setGameOptionData() {
-        int userId = new ViewModelProvider(requireActivity()).get(UserViewModel.class).getLoggedUser().getId();
-        ((TextView) sheetView.findViewById(R.id.gop_titleGameTxtV)).setText(game.getTitle());
-        ((TextView) sheetView.findViewById(R.id.gop_releasedGameTxtV)).setText(getYear(game.getReleased()));
-        ratingBar = sheetView.findViewById(R.id.ratingBar);
-        playedCheckBox = sheetView.findViewById(R.id.playedCheckBox);
-        playingCheckBox = sheetView.findViewById(R.id.playingCheckBox);
-        backlogCheckBox = sheetView.findViewById(R.id.backlogCheckBox);
-        sheetView.findViewById(R.id.addReview).setOnClickListener(view ->{
-            Bundle bundle = new Bundle();
-            bundle.putParcelable("videogame", game);
-            bundle.putFloat("rate", ratingBar.getRating());
-            ((MainActivity)requireActivity()).changeFragmentWithBundle(2, bundle);
-            bottomSheetDialog.dismiss();
-        });
-
-        playedCheckBox.setOnClickListener(view ->{
-            if(ratingBar.getRating() > 0 && !playedCheckBox.isChecked()){
-                playedCheckBox.setChecked(true);
-                Toast.makeText(requireContext(), "Unrated the game if you don't have played", Toast.LENGTH_SHORT).show();
-            }
-            if(playingCheckBox.isChecked() && playedCheckBox.isChecked()){
-                playingCheckBox.setChecked(false);
-            }
-        });
-
-        playingCheckBox.setOnClickListener(view ->{
-            if(backlogCheckBox.isChecked() && playingCheckBox.isChecked()){
-                backlogCheckBox.setChecked(false);
-            }
-        });
-
-        ratingBar.setOnRatingBarChangeListener((ratingBar, v, b) -> {
-            if(v > 0){
-                playedCheckBox.setChecked(true);
-            }
-        });
-
-        bottomSheetDialog.setOnDismissListener(dialogInterface -> {
-            userManager.updateGameData(userId, game.getId(),
-                playedCheckBox.isChecked(), playingCheckBox.isChecked(), backlogCheckBox.isChecked(), ratingBar.getRating());
-        });
-
-        userManager.getUserGameData(userId, game.getId(), new APICallBack() {
-            @Override
-            public void onSuccess(Object obj) {
-                if(obj != null){
-                    List<Boolean> states = (List<Boolean>) obj;
-                    playedCheckBox.setChecked(states.get(0));
-                    playingCheckBox.setChecked(states.get(1));
-                    backlogCheckBox.setChecked(states.get(2));
-                }
-            }
-
-            @Override
-            public void onError() {
-
-            }
-        });
-        reviewManager.getReview(game.getId(), userId, new APICallBack() {
-            @Override
-            public void onSuccess(Object obj) {
-                if(obj != null){
-                    ratingBar.setRating(((Review)obj).getRate());
-                }
-            }
-
-            @Override
-            public void onError() {}
-        });
-    }
-
-    private void collapsaitor(){
-        if(isCollapsed){
-            descrTxtV.setMaxLines(Integer.MAX_VALUE);
-            dropImgV.setImageDrawable(ResourcesCompat.getDrawable(getResources(), R.drawable.ui_drop_up, null));
-        }else{
-            descrTxtV.setMaxLines(MAX_LINES);
-            dropImgV.setImageDrawable(ResourcesCompat.getDrawable(getResources(), R.drawable.ui_drop_down, null));
-        }
-        isCollapsed = !isCollapsed;
-    }
-    private void applyLayoutTransition() {
-        LayoutTransition transition = new LayoutTransition();
-        transition.setDuration(325);
-        transition.enableTransitionType(LayoutTransition.CHANGING);
-        ((LinearLayout) descrTxtV.getParent()).setLayoutTransition(transition);
     }
 
     private void setPlatforms(List<Platform> platforms){
