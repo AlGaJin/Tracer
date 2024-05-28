@@ -270,11 +270,11 @@ public class VideogameDetailFragment extends Fragment {
             float oldV = review.getRate();
             if(v > 0){
                 playedCheckBox.setChecked(true);
-                if(v != oldV){
-                    updateChartValue(oldV, v);
-                }
             }
-            review.setRate(v);
+            if(v != oldV){
+                updateChartValue(oldV, v);
+                review.setRate(v);
+            }
         });
 
         sheetView.findViewById(R.id.addReview).setOnClickListener(view ->{
@@ -328,11 +328,17 @@ public class VideogameDetailFragment extends Fragment {
         BarDataSet dataSet = (BarDataSet) data.getDataSetByIndex(0);
 
         //Elimino la entrada antigua
-        Entry oldEntry = dataSet.getEntryForXValue(oldV, 0);
-        oldEntry.setY(oldEntry.getY()-1);
+        if(oldV != 0){
+            Entry oldEntry = dataSet.getEntryForXValue(oldV, Float.NaN);
+            oldEntry.setY(oldEntry.getY()-1);
+        }
         //Aumento la entrada nueva
-        Entry newEntry = dataSet.getEntryForXValue(newV, 0);
-        newEntry.setY(newEntry.getY()+1);
+        if(newV != 0){
+            Entry newEntry = dataSet.getEntryForXValue(newV, Float.NaN);
+            newEntry.setY(newEntry.getY()+1);
+        }
+
+
 
         data.notifyDataChanged();
         ratingBarChart.notifyDataSetChanged();
