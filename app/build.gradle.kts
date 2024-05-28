@@ -44,6 +44,12 @@ dependencies {
     implementation("de.hdodenhof:circleimageview:3.1.0")
     implementation("com.google.android.flexbox:flexbox:3.0.0")
     implementation("io.coil-kt:coil:2.6.0")
+    implementation("io.noties.markwon:core:4.6.2")
+    implementation("com.github.lzyzsd:circleprogress:1.2.4"){
+        exclude("com.android.support")
+    }
+    implementation("com.github.PhilJay:MPAndroidChart:v3.1.0")
+
 
     implementation("androidx.viewpager2:viewpager2:1.1.0")
     implementation("androidx.appcompat:appcompat:1.6.1")

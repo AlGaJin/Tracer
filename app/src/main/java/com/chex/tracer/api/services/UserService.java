@@ -1,5 +1,6 @@
 package com.chex.tracer.api.services;
 
+import com.chex.tracer.api.models.Store;
 import com.chex.tracer.api.models.User;
 
 import org.json.JSONObject;
@@ -31,6 +32,8 @@ public interface UserService {
     Call<Boolean> isEmailAvailable(@Path("email") String email);
     @GET(StructureService.SOCIAL_MEDIA_DATA)
     Call<List<String>> getSocialMediaDataFrom(@Path("id") int userId);
+    @GET(StructureService.USER_GAME_DATA)
+    Call<List<Boolean>> getGameDataFrom(@Path("userId") int userId, @Path("gameId") int gameId);
 
     //Llamadas POST
     @POST(StructureService.LOGIN)
@@ -43,6 +46,8 @@ public interface UserService {
     //Llamadas PUT
     @PUT(StructureService.EDIT_USER)
     Call<Boolean> editUser(@Body RequestBody params);
+    @PUT(StructureService.UPDATE_GAME_DATA)
+    Call<Void> updateGameData(@Body RequestBody params);
 
 
     //Llamadas a DELETE

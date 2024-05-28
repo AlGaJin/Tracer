@@ -1,19 +1,16 @@
 package com.chex.tracer.fragments.nav;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.ActionBar;
 import androidx.core.content.res.ResourcesCompat;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider;
+import androidx.lifecycle.ViewModelStoreOwner;
 import androidx.preference.PreferenceManager;
 
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -27,9 +24,9 @@ import com.chex.tracer.api.APICallBack;
 import com.chex.tracer.api.managers.UserManager;
 import com.chex.tracer.api.models.User;
 import com.chex.tracer.fragments.others.EditProfileFragment;
+import com.chex.tracer.utils.UserViewModel;
 
 import java.util.List;
-import java.util.Objects;
 
 public class ProfileFragment extends Fragment {
     private final UserManager userManager = new UserManager();
@@ -59,7 +56,7 @@ public class ProfileFragment extends Fragment {
 
     private void whoIsLogged() {
         Bundle bundle = getArguments();
-        if(bundle != null){
+        if(bundle != null && bundle.containsKey("userId")){
             userManager.getUser(bundle.getInt("userId"), new APICallBack() {
                 @Override
                 public void onSuccess(Object obj) {
@@ -74,20 +71,20 @@ public class ProfileFragment extends Fragment {
                 }
             });
 
-            rightBtn.setCompoundDrawablesWithIntrinsicBounds(0,0,R.drawable.chat, 0);
+            rightBtn.setCompoundDrawablesWithIntrinsicBounds(0,0,R.drawable.ui_chat, 0);
             rightBtn.setText("");
             leftBtn.setText(R.string.follow);
             leftBtn.setOnClickListener(view -> isFollowing());
         }else{
-            user = ((MainActivity) requireActivity()).getLoggedUser();
+            user = new ViewModelProvider(requireActivity()).get(UserViewModel.class).getLoggedUser();
             setUserMediaData();
-            leftBtn.setOnClickListener(view -> editUser());
+            leftBtn.setOnClickListener(view -> ((MainActivity)requireActivity()).changeFragmentWithBundle(3, null));
             rightBtn.setOnClickListener(view -> logOut());
         }
     }
 
     public void isFollowing(){
-        int followerId = ((MainActivity)requireActivity()).getLoggedUser().getId();
+        int followerId = new ViewModelProvider(requireActivity()).get(UserViewModel.class).getLoggedUser().getId();
         int followedId = user.getId();
         userManager.isFollowing(followerId, followedId, new APICallBack() {
             @Override
@@ -104,11 +101,6 @@ public class ProfileFragment extends Fragment {
 
             }
         });
-    }
-
-    private void editUser() {
-        MainActivity main = (MainActivity) requireActivity();
-        main.changeNavFragment(new EditProfileFragment(), main.addDeque(-1));
     }
 
     private void setUserMediaData(){

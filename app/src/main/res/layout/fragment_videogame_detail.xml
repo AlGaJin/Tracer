@@ -1,14 +1,217 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".fragments.others.VideogameDetailFragment">
 
-    <!-- TODO: Update blank fragment layout -->
-    <TextView
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/optionsFab"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="30dp"
+        android:layout_marginBottom="30dp"
+        android:src="@drawable/ui_plus"
+        app:backgroundTint="@color/lightAccent"
+        app:fabSize="normal"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:tint="@color/primaryDark"
+        android:theme="@style/Theme.MaterialComponents.DayNight"
+        tools:ignore="SpeakableTextPresentCheck" />
+
+    <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:text="@string/hello_blank_fragment" />
+        android:overScrollMode="never"
+        android:scrollbars="none"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.0">
 
-</FrameLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="top"
+            android:orientation="vertical">
+
+            <ImageView
+                android:id="@+id/gameImgBackground"
+                android:layout_width="match_parent"
+                android:layout_height="190dp"
+                android:layout_gravity="top"
+                android:foreground="@drawable/util_soft_gradient_shadow"
+                android:foregroundTint="?attr/colorPrimary"
+                android:scaleType="centerCrop"
+                android:src="@color/burgundy" />
+
+            <TextView
+                android:id="@+id/gameTitleTxtV"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingStart="10dp"
+                android:paddingEnd="10dp"
+                android:text=""
+                android:textAlignment="center"
+                android:textSize="25sp"
+                android:textStyle="bold" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:padding="5dp"
+                android:layout_margin="5dp">
+
+                <TextView
+                    android:id="@+id/releasedTxtV"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/util_rounder"
+                    android:padding="2dp"
+                    android:gravity="center"
+                    android:backgroundTint="@color/backgroundData"
+                    android:layout_weight="1"
+                    android:layout_marginEnd="10dp"/>
+
+                <LinearLayout
+                    android:id="@+id/platformLayout"
+                    android:layout_gravity="center"
+                    android:gravity="center"
+                    android:orientation="horizontal"
+                    android:padding="3dp"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:background="@drawable/util_rounder"
+                    android:backgroundTint="@color/backgroundData"
+                    android:layout_weight="2" />
+            </LinearLayout>
+
+
+            <TextView
+                android:id="@+id/gameDescrMKTxtV"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:ellipsize="end"
+                android:justificationMode="inter_word"
+                android:maxLines="5"
+                android:paddingStart="14dp"
+                android:paddingEnd="14dp"
+                android:textColor="?android:attr/textColor"
+                android:textSize="13sp" />
+
+            <ImageView
+                android:id="@+id/dropImgV"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ui_drop_down"
+                app:tint="?android:attr/textColor" />
+
+            <com.google.android.material.divider.MaterialDivider
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_marginStart="10dp"
+                android:layout_marginEnd="10dp"
+                android:backgroundTint="?android:attr/textColor" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="10dp"
+                android:gravity="center"
+                android:layout_gravity="center">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_gravity="center"
+                    android:gravity="center">
+
+                    <TextView
+                        android:id="@+id/ratingTxtV"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textSize="35sp"
+                        android:textStyle="bold"
+                        android:layout_marginEnd="5dp"/>
+                    <ImageView
+                        android:layout_width="35dp"
+                        android:layout_height="35dp"
+                        app:tint="?attr/highLighted"
+                        android:src="@drawable/ui_star" />
+
+                    <com.google.android.material.divider.MaterialDivider
+                        android:id="@+id/totalRatingsDivider"
+                        android:layout_width="1dp"
+                        android:layout_height="match_parent"
+                        android:layout_marginStart="10dp"
+                        android:layout_marginEnd="10dp"
+                        android:backgroundTint="?android:attr/textColor"
+                        android:visibility="gone" />
+
+                    <ImageView
+                        android:id="@+id/totalRatingsImgV"
+                        android:layout_width="35dp"
+                        android:layout_height="35dp"
+                        app:tint="?attr/highLighted"
+                        android:layout_marginEnd="5dp"
+                        android:src="@drawable/ui_user"
+                        android:visibility="gone" />
+
+                    <TextView
+                        android:id="@+id/totalRatingsTxtV"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textSize="35sp"
+                        android:textStyle="bold"
+                        android:visibility="gone" />
+                </LinearLayout>
+
+                <com.github.mikephil.charting.charts.BarChart
+                    android:id="@+id/ratingBarChart"
+                    android:layout_width="match_parent"
+                    android:layout_height="100dp"
+                    />
+
+            </LinearLayout>
+
+            <com.google.android.material.divider.MaterialDivider
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_marginStart="10dp"
+                android:layout_marginEnd="10dp"
+                android:backgroundTint="?android:attr/textColor" />
+
+
+            <com.github.lzyzsd.circleprogress.CircleProgress
+                android:id="@+id/metacriticScoreCircleProgress"
+                style="@style/MyCircleProgress"
+                android:layout_width="150dp"
+                android:layout_height="150dp"
+                android:layout_gravity="center"
+                android:layout_margin="10dp"
+                android:background="@drawable/util_rounder"
+                app:circle_suffix_text=""
+                app:circle_text_size="50sp"
+                app:circle_unfinished_color="#00000000" />
+            <TextView
+                android:id="@+id/metacriticTxtV"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/metacritic_score"
+                android:textAlignment="center"
+                android:textSize="18sp" />
+
+            <Space
+                android:layout_width="match_parent"
+                android:layout_height="75dp"/>
+        </LinearLayout>
+    </ScrollView>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

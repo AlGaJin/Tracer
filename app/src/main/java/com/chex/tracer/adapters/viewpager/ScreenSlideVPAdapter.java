@@ -6,15 +6,13 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 import androidx.viewpager2.adapter.FragmentStateAdapter;
 
-import com.chex.tracer.fragments.nav.HomeFragment;
-import com.chex.tracer.fragments.tab.ListsTabFragment;
+import com.chex.tracer.fragments.others.ReviewFragment;
 import com.chex.tracer.fragments.tab.ReviewsTabFragment;
 import com.chex.tracer.fragments.tab.VideogamesTabFragment;
 
 public class ScreenSlideVPAdapter extends FragmentStateAdapter {
     private Fragment[] fragments = new Fragment[]{
             new VideogamesTabFragment(),
-            new ListsTabFragment(),
             new ReviewsTabFragment()
     };
 
@@ -30,6 +28,6 @@ public class ScreenSlideVPAdapter extends FragmentStateAdapter {
 
     @Override
     public int getItemCount() {
-        return 3;
+        return fragments.length;
     }
 }

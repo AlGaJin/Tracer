@@ -11,6 +11,7 @@ import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.core.content.res.ResourcesCompat;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -30,6 +31,7 @@ import com.chex.tracer.adapters.recyclerview.AvatarAdapter;
 import com.chex.tracer.api.APICallBack;
 import com.chex.tracer.api.managers.UserManager;
 import com.chex.tracer.api.models.User;
+import com.chex.tracer.utils.UserViewModel;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 
 import java.io.IOException;
@@ -44,13 +46,15 @@ public class EditProfileFragment extends Fragment {
     private CircleImageView userProfilePic;
     private EditText usernameEditTxt, emailEditTxt, descrEditTxt;
     private User updatedUser;
+    private User loggedUser;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_edit_profile, container, false);
 
-        updatedUser = ((MainActivity)requireActivity()).getLoggedUser().clone();
+        loggedUser = new ViewModelProvider(requireActivity()).get(UserViewModel.class).getLoggedUser();
+        updatedUser = new ViewModelProvider(requireActivity()).get(UserViewModel.class).getLoggedUser().clone();
 
         userProfilePic = v.findViewById(R.id.edit_userImgV);
         usernameEditTxt = v.findViewById(R.id.edit_usernameEditTxt);
@@ -59,7 +63,7 @@ public class EditProfileFragment extends Fragment {
 
         setData();
 
-        v.findViewById(R.id.edit_userPicRelativeLayout).setOnClickListener(view -> actionForBottomSheet());
+        v.findViewById(R.id.edit_userPicRelativeLayout).setOnClickListener(view -> showActionBottomSheet());
         v.findViewById(R.id.edit_saveBtn).setOnClickListener(view -> saveChanges());
         return v;
     }
@@ -79,7 +83,6 @@ public class EditProfileFragment extends Fragment {
 
     private void saveChanges() {
         if(checkFields()){
-            User loggedUser = ((MainActivity)requireActivity()).getLoggedUser();
             userManager.updateUser(loggedUser.getId(), updatedUser.getUsername(), updatedUser.getEmail(), updatedUser.getDescr(), updatedUser.getProfile_pic(), new APICallBack() {
                 @Override
                 public void onSuccess(Object obj) {
@@ -101,8 +104,6 @@ public class EditProfileFragment extends Fragment {
     }
 
     private boolean checkFields(){
-        User loggedUser = ((MainActivity)requireActivity()).getLoggedUser();
-
         String newUsername = usernameEditTxt.getText().toString().trim();
         String newEmail = emailEditTxt.getText().toString().trim();
         String newDescr = descrEditTxt.getText().toString().trim();
@@ -161,7 +162,7 @@ public class EditProfileFragment extends Fragment {
         return true;
     }
 
-    private void actionForBottomSheet() {
+    private void showActionBottomSheet() {
         BottomSheetDialog bottomSheetDialog = new BottomSheetDialog(requireContext());
         View sheetView = LayoutInflater.from(requireContext()).inflate(R.layout.dialog_edit_profile_pic, null);
         bottomSheetDialog.setContentView(sheetView);
@@ -174,6 +175,7 @@ public class EditProfileFragment extends Fragment {
         rv.setAdapter(new AvatarAdapter(getAvatars(), bottomSheetDialog, userProfilePic));
 
         sheetView.findViewById(R.id.deleteAvatarImgV).setOnClickListener(view -> {
+            userProfilePic.setTag(R.drawable.avatar_default);
             userProfilePic.setImageDrawable(ResourcesCompat.getDrawable(
                     view.getResources(), R.drawable.avatar_default, null));
             bottomSheetDialog.hide();

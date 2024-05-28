@@ -35,7 +35,7 @@
                 android:elevation="4dp"
 
                 style="@style/MyEditBtn"
-                android:src="@drawable/edit" />
+                android:src="@drawable/ui_edit" />
         </RelativeLayout>
 
         <com.google.android.material.divider.MaterialDivider

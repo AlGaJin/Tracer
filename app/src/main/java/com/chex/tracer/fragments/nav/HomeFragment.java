@@ -29,7 +29,6 @@ public class HomeFragment extends Fragment {
         new TabLayoutMediator(tabLayout, viewPager2, (tab, position) -> {
             String[] tabNames = new String[]{
                     getString(R.string.videogames),
-                    getString(R.string.lists),
                     getString(R.string.reviews)
             };
             tab.setText(tabNames[position]);

@@ -15,6 +15,7 @@ import com.chex.tracer.adapters.recyclerview.GamesCardViewAdapter;
 import com.chex.tracer.api.APICallBack;
 import com.chex.tracer.api.managers.VideogameManager;
 import com.chex.tracer.api.models.Videogame;
+import com.chex.tracer.utils.DisallowParentSwipeOnItemTouchListener;
 
 import java.util.List;
 
@@ -40,6 +41,7 @@ public class VideogamesTabFragment extends Fragment {
 
             }
         });
+        latestGamesRV.addOnItemTouchListener(new DisallowParentSwipeOnItemTouchListener());
 
         //RecyclerView friendsActivityRV = v.findViewById(R.id.friendsActivity);
 

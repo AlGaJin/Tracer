@@ -1,5 +1,6 @@
 package com.chex.tracer.adapters.recyclerview;
 
+import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -7,10 +8,13 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.chex.tracer.R;
+import com.chex.tracer.activities.MainActivity;
 import com.chex.tracer.api.models.Videogame;
+import com.chex.tracer.fragments.others.VideogameDetailFragment;
 
 import java.util.List;
 
@@ -25,14 +29,14 @@ public class GamesCardViewAdapter extends RecyclerView.Adapter<GamesCardViewAdap
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder{
-        private ImageView imageView;
-        private TextView titleTxtView;
+        private CardView cardView;
+        private ImageView gameImgView;
+        private TextView gameTitleTxtV;
         ViewHolder(@NonNull View itemView){
             super(itemView);
-
-            imageView = itemView.findViewById(R.id.imageView);
-            titleTxtView = itemView.findViewById(R.id.titleTextView);
-
+            cardView = itemView.findViewById(R.id.gamesCardView);
+            gameImgView = itemView.findViewById(R.id.imageView);
+            gameTitleTxtV = itemView.findViewById(R.id.titleTextView);
         }
 
         public void bind(Videogame videogame){
@@ -41,10 +45,15 @@ public class GamesCardViewAdapter extends RecyclerView.Adapter<GamesCardViewAdap
 
             if (imgUrl != null) {
                 ImageLoader imageLoader = Coil.imageLoader(itemView.getContext());
-                ImageRequest request = new ImageRequest.Builder(itemView.getContext()).data(imgUrl).crossfade(true).target(imageView).build();
+                ImageRequest request = new ImageRequest.Builder(itemView.getContext()).data(imgUrl).crossfade(true).target(gameImgView).build();
                 imageLoader.enqueue(request);
             }
-            titleTxtView.setText(title);
+            gameTitleTxtV.setText(title);
+            cardView.setOnClickListener(view -> {
+                Bundle bundle = new Bundle();
+                bundle.putParcelable("videogame", videogame);
+                ((MainActivity)itemView.getContext()).changeFragmentWithBundle(1, bundle);
+            });
         }
     }
 

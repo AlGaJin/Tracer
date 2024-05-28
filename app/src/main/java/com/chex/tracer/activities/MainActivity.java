@@ -9,11 +9,15 @@ import androidx.core.content.res.ResourcesCompat;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModel;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.preference.PreferenceManager;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.util.Log;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
@@ -23,9 +27,14 @@ import com.chex.tracer.R;
 import com.chex.tracer.api.APICallBack;
 import com.chex.tracer.api.managers.UserManager;
 import com.chex.tracer.api.models.User;
+import com.chex.tracer.api.models.Videogame;
 import com.chex.tracer.fragments.nav.HomeFragment;
 import com.chex.tracer.fragments.nav.ProfileFragment;
 import com.chex.tracer.fragments.nav.SettingsFragment;
+import com.chex.tracer.fragments.others.EditProfileFragment;
+import com.chex.tracer.fragments.others.ReviewFragment;
+import com.chex.tracer.fragments.others.VideogameDetailFragment;
+import com.chex.tracer.utils.UserViewModel;
 import com.google.android.material.navigation.NavigationView;
 
 import java.util.ArrayDeque;
@@ -35,8 +44,8 @@ import java.util.Objects;
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
+    private UserViewModel userViewModel;
     private ProgressBar mainPB;
-    private User loggedUser;
     private ImageView profilePic;
     private SharedPreferences preferences;
     private DrawerLayout drawerLayout;
@@ -44,6 +53,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private ActionBarDrawerToggle toggle;
     private Deque<Integer> idDeque; // Lista "estática" que tiene funciones de listas dinámicas (útil para Back Stack casero)
     private boolean flag; // Boleano necesario para Back Stack casero
+    private Bundle bundle;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,6 +61,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         setContentView(R.layout.activity_main);
 
         mainPB = findViewById(R.id.main_pb);
+        userViewModel = new ViewModelProvider(this).get(UserViewModel.class);
 
         preferences = PreferenceManager.getDefaultSharedPreferences(this);
         isLogged();
@@ -59,7 +70,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         flag = true;
 
         profilePic = findViewById(R.id.toolbar_userProfilePic);
-        profilePic.setOnClickListener(view -> changeNavFragment(getFragment(addDeque(R.id.nav_profile)), R.id.nav_profile));
+        profilePic.setOnClickListener(view -> changeNavFragment(getFragment(addDeque(R.id.nav_profile), bundle), R.id.nav_profile));
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         Objects.requireNonNull(getSupportActionBar()).setDisplayShowTitleEnabled(false);
@@ -72,26 +83,20 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         drawerLayout.addDrawerListener(toggle);
         toggle.syncState();
 
-        if(savedInstanceState == null){
-            getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new HomeFragment()).commit();
-            idDeque.addLast(R.id.nav_home);
-            navView.setCheckedItem(R.id.nav_home);
-        }
+        getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new HomeFragment()).commit();
+        idDeque.addLast(R.id.nav_home);
+        navView.setCheckedItem(R.id.nav_home);
 
         getOnBackPressedDispatcher().addCallback(this, new OnBackPressedCallback(true) {
             @Override
             public void handleOnBackPressed() {
-                if (drawerLayout.isOpen()) {
-                    drawerLayout.close();
-                } else {
-                    accionBack();
-                }
+                accionBack(bundle);
             }
         });
 
         toolbar.setNavigationOnClickListener(view -> {
             if (!toggle.isDrawerIndicatorEnabled()) {
-                accionBack();
+                accionBack(bundle);
             } else {
                 drawerLayout.openDrawer(GravityCompat.START);
             }
@@ -105,9 +110,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             new UserManager().getUser(Integer.parseInt(userId), new APICallBack() {
                 @Override
                 public void onSuccess(Object obj) {
-                    loggedUser = (User)obj;
+                    userViewModel.setLoggedUser((User)obj);
 
-                    setProfilePic(loggedUser.getProfile_pic());
+                    setProfilePic(userViewModel.getLoggedUser().getProfile_pic());
 
                     mainPB.setVisibility(View.GONE);
                 }
@@ -144,7 +149,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         return id;
     }
 
-    public Fragment getFragment(int id){
+    public Fragment getFragment(int id, Bundle bundle){
         Fragment fgt = new HomeFragment();
 
         if(id == R.id.nav_home){
@@ -153,26 +158,39 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         } else if(id == R.id.nav_profile){
             fgt = new ProfileFragment();
             showHamburgerBtn(false);
-        } else if(id == R.id.nav_settings){
+        } else if(id == R.id.nav_settings) {
             fgt = new SettingsFragment();
+            showHamburgerBtn(false);
+        } else if (id == 1) {
+            fgt = new VideogameDetailFragment();
+            showHamburgerBtn(false);
+        }else if (id == 2){
+            fgt = new ReviewFragment();
+            showHamburgerBtn(false);
+        }else if (id == 3){
+            fgt = new EditProfileFragment();
             showHamburgerBtn(false);
         }
 
+        fgt.setArguments(bundle);
         return fgt;
     }
 
-    public void accionBack(){
-        idDeque.pop(); // Elimino el id del fragmento que se está mostrando
-        if(!idDeque.isEmpty()){
-            changeNavFragment(getFragment(idDeque.getFirst()), idDeque.getFirst()); // Muestro el fragmento que se estaba mostrando anteriormente
-        } else if (Objects.requireNonNull(getVisibleFragment()).getClass().equals(HomeFragment.class)){
-            finish(); // Si la lista está vacia se cierra el programa
-        }else{
-            changeNavFragment(getFragment(addDeque(R.id.nav_home)), R.id.nav_home);
+    public void accionBack(Bundle bundle){
+        if (drawerLayout.isOpen()) {
+            drawerLayout.close();
+        } else {
+            idDeque.pop(); // Elimino el id del fragmento que se está mostrando
+            if (!idDeque.isEmpty()) {
+                changeNavFragment(getFragment(idDeque.getFirst(), bundle), idDeque.getFirst()); // Muestro el fragmento que se estaba mostrando anteriormente
+            } else if (Objects.requireNonNull(getVisibleFragment()).getClass().equals(HomeFragment.class)) {
+                finish(); // Si la lista está vacia se cierra el programa
+            }
         }
     }
 
     private Fragment getVisibleFragment(){
+
         List<Fragment> fragmentos = getSupportFragmentManager().getFragments();
         for (Fragment f : fragmentos)
             if(f.isVisible()) return f;
@@ -186,7 +204,18 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     .replace(R.id.fragment_container, newFgt).commit();
         }
 
-        if(itemId != -1) navView.setCheckedItem(itemId);
+
+        Log.d("AAAAAAAAAAAAAAAAAAAAAAAAAAA", "changeNavFragment: " + itemId);
+
+        Menu menu = navView.getMenu();
+        for (int i = 0; i < menu.size(); i++) {
+            MenuItem item = menu.getItem(i);
+            if(itemId == item.getItemId()){
+                item.setChecked(true);
+            }else{
+                item.setChecked(false);
+            }
+        }
     }
 
     public void showHamburgerBtn(boolean enabled) {
@@ -205,15 +234,12 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         int itemId = item.getItemId();
 
         drawerLayout.close();
-        changeNavFragment(getFragment(addDeque(itemId)), itemId);
+        changeNavFragment(getFragment(addDeque(itemId), bundle), itemId);
         return true;
     }
 
-    public User getLoggedUser(){
-        return loggedUser;
-    }
-
-    public ProgressBar getProgressBar(){
-        return mainPB;
+    public void changeFragmentWithBundle(int fgtId, Bundle bundle) {
+        this.bundle = bundle;
+        changeNavFragment(getFragment(addDeque(fgtId), bundle), -1);
     }
 }

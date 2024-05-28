@@ -1,4 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <attr name="logo_picture" format="reference"/>
+    <attr name="highLighted" format="color"/>
+    <attr name="contrastBackGround" format="color"/>
 </resources>

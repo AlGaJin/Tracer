@@ -15,6 +15,9 @@
         <item name="android:textColorHint">@color/shadow</item>
 
         <item name="bottomSheetDialogTheme">@style/MyDialogStyle</item>
+
+        <item name="highLighted">@color/darkAccent</item>
+        <item name="contrastBackGround">#72FFFFFF</item>
     </style>
 
     <style name="MyBtnStyle" parent="">
@@ -53,13 +56,25 @@
 
     <style name="MyEditBtn">
         <item name="tint">@color/lightAccent</item>
-        <item name="android:background">@drawable/rounder</item>
+        <item name="android:background">@drawable/util_rounder</item>
         <item name="android:backgroundTint">@color/primaryDark</item>
     </style>
 
     <style name="MyDialogStyle" parent="Theme.Material3.Dark.BottomSheetDialog">
         <item name="android:backgroundTint">@color/primaryLight</item>
         <item name="android:navigationBarColor">@color/primaryLight</item>
+    </style>
+
+    <style name="MyCircleProgress" parent="">
+        <item name="android:backgroundTint">#C633040E</item>
+    </style>
+
+    <style name="MyRatingBar" parent="Widget.AppCompat.RatingBar">
+        <item name="android:progressTint">?attr/highLighted</item>
+        <item name="android:numStars">5</item>
+        <item name="android:stepSize">0.5</item>
+        <item name="android:secondaryProgressTint">?attr/colorPrimaryDark</item>
+        <item name="android:progressBackgroundTint">@color/rating_selector</item>
     </style>
 
     <style name="Theme.Tracer" parent="Base.Theme.Tracer" />

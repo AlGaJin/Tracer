@@ -1,8 +1,13 @@
 package com.chex.tracer.api.models;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import androidx.annotation.NonNull;
 
-public class User implements Cloneable{
+import java.sql.Timestamp;
+
+public class User implements Cloneable, Parcelable {
     private int id;
     private String username;
     private String email;
@@ -71,5 +76,28 @@ public class User implements Cloneable{
                 ", descr='" + descr + '\'' +
                 ", profilePic=" + profile_pic +
                 '}';
+    }
+
+    // Métodos Parcelable
+    protected User(Parcel in) {
+        id = in.readInt();
+        username = in.readString();
+        email = in.readString();
+        descr = in.readString();
+        profile_pic = in.readString();
+    }
+
+    @Override
+    public void writeToParcel(@NonNull Parcel dest, int i) {
+        dest.writeInt(id);
+        dest.writeString(username);
+        dest.writeString(email);
+        dest.writeString(descr);
+        dest.writeString(profile_pic);
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
     }
 }

@@ -13,7 +13,10 @@ public abstract class StructureService {
     public static final String IS_EMAIL_AVAILABLE = BASE_USER + "isemailavailable/{email}/";
     public static final String LOGIN = BASE_USER + "login/";
     public static final String SIGNUP = BASE_USER + "signup/";
-    public static final String SOCIAL_MEDIA_DATA = BASE_USER + "{id}/socialmediadata";
+    public static final String SOCIAL_MEDIA_DATA = BASE_USER + "{id}/socialmediadata/";
+    public static final String USER_GAME_DATA = BASE_USER + "{userId}/gamedetails/{gameId}/";
+    public static final String UPDATE_GAME_DATA = BASE_USER + "updategamedata/";
+    public static final String UPDATE_GAME_RATING = BASE_USER + "updategamerating/";
     public static final String IS_FOLLOWING = BASE_USER + "isFollowing/";
     public static final String EDIT_USER = BASE_USER + "edit/";
     public static final String DELETE_USER = BASE_USER + DELETE;
@@ -22,4 +25,8 @@ public abstract class StructureService {
     public static final String BASE_VG = "videogame/";
     public static final String GET_LATEST_VG = BASE_VG + "latest/";
     public static final String GET_VG_BY_ID = BASE_VG + "{id}/";
+    public static final String GET_VG_STORES = GET_VG_BY_ID + "stores/";
+    public static final String GET_VG_PLATFORMS = GET_VG_BY_ID + "platforms/";
+    public static final String GET_USER_VG_RATE = BASE_VG + "{gameId}/userrate/{userId}/";
+    public static final String GET_VG_RATINGS = GET_VG_BY_ID + "ratings/";
 }

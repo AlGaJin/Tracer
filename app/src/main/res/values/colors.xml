@@ -9,4 +9,10 @@
     <color name="lightAccent">#FF8090</color>
     <color name="darkAccent">#B62E3C</color>
     <color name="burgundy">#751925</color>
+
+    <color name="backgroundData">#27FFFFFF</color>
+
+    <color name="lowScore">#FF4136</color>
+    <color name="midScore">#FFC300</color>
+    <color name="highScore">#5CB85C</color>
 </resources>

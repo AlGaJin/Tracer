@@ -42,4 +42,13 @@
     <string name="follow">Follow</string>
     <string name="following">Following</string>
     <string name="content_descr_user_profile_pic">User profile pic</string>
+    <string name="metacritic_score">Metacritic Score</string>
+    <string name="users_score">Users Score</string>
+    <string name="played">Played</string>
+    <string name="backlog">Backlog</string>
+    <string name="playing">Playing</string>
+    <string name="rate">Rate</string>
+    <string name="review">Review</string>
+    <string name="write_your_review_here">Write your review here...</string>
+    <string name="submit">Submit</string>
 </resources>
