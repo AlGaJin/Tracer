@@ -84,8 +84,8 @@ public class VideogameDetailFragment extends Fragment {
     private Videogame game;
     private Review review;
 
-    private float averageRating;
-    private int totalRates;
+    private float averageRating = 0;
+    private int totalRates = 1;
     private boolean isCollapsed = true;
 
     private TextView titleTxtV, descrTxtV, releasedTxtV, metacriticTxtV, ratingTxtV, totalRatingsTxtV;
@@ -337,8 +337,6 @@ public class VideogameDetailFragment extends Fragment {
             Entry newEntry = dataSet.getEntryForXValue(newV, Float.NaN);
             newEntry.setY(newEntry.getY()+1);
         }
-
-
 
         data.notifyDataChanged();
         ratingBarChart.notifyDataSetChanged();

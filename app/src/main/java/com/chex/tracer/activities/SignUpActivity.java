@@ -113,8 +113,6 @@ public class SignUpActivity extends AppCompatActivity {
                         editor.putString("userId", userId);
                         editor.apply();
                         changeActivity(MainActivity.class);
-                    }else{
-                        Toast.makeText(SignUpActivity.this, "Sí, está entrando :C", Toast.LENGTH_SHORT).show();
                     }
                 }
 
