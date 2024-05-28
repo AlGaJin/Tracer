@@ -16,7 +16,6 @@ public abstract class StructureService {
     public static final String SOCIAL_MEDIA_DATA = BASE_USER + "{id}/socialmediadata/";
     public static final String USER_GAME_DATA = BASE_USER + "{userId}/gamedetails/{gameId}/";
     public static final String UPDATE_GAME_DATA = BASE_USER + "updategamedata/";
-    public static final String UPDATE_GAME_RATING = BASE_USER + "updategamerating/";
     public static final String IS_FOLLOWING = BASE_USER + "isFollowing/";
     public static final String EDIT_USER = BASE_USER + "edit/";
     public static final String DELETE_USER = BASE_USER + DELETE;
@@ -27,6 +26,10 @@ public abstract class StructureService {
     public static final String GET_VG_BY_ID = BASE_VG + "{id}/";
     public static final String GET_VG_STORES = GET_VG_BY_ID + "stores/";
     public static final String GET_VG_PLATFORMS = GET_VG_BY_ID + "platforms/";
-    public static final String GET_USER_VG_RATE = BASE_VG + "{gameId}/userrate/{userId}/";
     public static final String GET_VG_RATINGS = GET_VG_BY_ID + "ratings/";
+
+    //REVIEW
+    public static final String BASE_REVIEW = "review/";
+    public static final String GET_REVIEW = BASE_REVIEW + "{gameId}/{userId}/";
+    public static final String UPDATE_REVIEW = BASE_REVIEW + "edit/";
 }

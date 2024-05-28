@@ -204,9 +204,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     .replace(R.id.fragment_container, newFgt).commit();
         }
 
-
-        Log.d("AAAAAAAAAAAAAAAAAAAAAAAAAAA", "changeNavFragment: " + itemId);
-
         Menu menu = navView.getMenu();
         for (int i = 0; i < menu.size(); i++) {
             MenuItem item = menu.getItem(i);

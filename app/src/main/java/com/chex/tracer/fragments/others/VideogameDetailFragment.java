@@ -33,9 +33,11 @@ import com.chex.tracer.R;
 import com.chex.tracer.activities.MainActivity;
 import com.chex.tracer.adapters.recyclerview.AvatarAdapter;
 import com.chex.tracer.api.APICallBack;
+import com.chex.tracer.api.managers.ReviewManager;
 import com.chex.tracer.api.managers.UserManager;
 import com.chex.tracer.api.managers.VideogameManager;
 import com.chex.tracer.api.models.Platform;
+import com.chex.tracer.api.models.Review;
 import com.chex.tracer.api.models.Videogame;
 import com.chex.tracer.utils.UserViewModel;
 import com.github.lzyzsd.circleprogress.CircleProgress;
@@ -77,6 +79,7 @@ public class VideogameDetailFragment extends Fragment {
     private final String[] PLAYSTATION = {"playstation 5", "playstation 4", "playstation 3", "playstation 2", "ps vita"};
     private final VideogameManager videogameManager = new VideogameManager();
     private final UserManager userManager = new UserManager();
+    private final ReviewManager reviewManager = new ReviewManager();
 
     private Videogame game;
     private boolean isCollapsed = true;
@@ -396,11 +399,11 @@ public class VideogameDetailFragment extends Fragment {
 
             }
         });
-        videogameManager.getUserRate(game.getId(), userId, new APICallBack() {
+        reviewManager.getReview(game.getId(), userId, new APICallBack() {
             @Override
             public void onSuccess(Object obj) {
                 if(obj != null){
-                    ratingBar.setRating((Float)obj);
+                    ratingBar.setRating(((Review)obj).getRate());
                 }
             }
 

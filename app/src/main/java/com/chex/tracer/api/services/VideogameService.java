@@ -12,6 +12,7 @@ import retrofit2.http.Path;
 
 public interface VideogameService {
 
+    //Llamadas GET
     @GET(StructureService.BASE_VG)
     Call<List<Videogame>> getAllVideogames();
     @GET(StructureService.GET_LATEST_VG)
@@ -22,8 +23,6 @@ public interface VideogameService {
     Call<List<Store>> getVideogameStores(@Path("id") int vgId);
     @GET(StructureService.GET_VG_PLATFORMS)
     Call<List<Platform>> getVideogamesPlatforms(@Path("id") int vgId);
-    @GET(StructureService.GET_USER_VG_RATE)
-    Call<Float> getUserGameRate(@Path("gameId") int gameId, @Path("userId") int userId);
     @GET(StructureService.GET_VG_RATINGS)
     Call<List<Float>> getVideogamesRatings(@Path("id") int vgId);
 

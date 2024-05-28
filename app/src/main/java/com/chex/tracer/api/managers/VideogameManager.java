@@ -119,29 +119,6 @@ public class VideogameManager extends BaseManager {
         }
     }
 
-    public void getUserRate(int gameId, int userId, final APICallBack apiCallBack){
-        try{
-            JSONObject params = new JSONObject();
-            params.put("gameId", gameId);
-            params.put("userId", userId);
-
-            vgService.getUserGameRate(gameId, userId).enqueue(new Callback<Float>() {
-                @Override
-                public void onResponse(Call<Float> call, Response<Float> response) {
-                    apiCallBack.onSuccess(response.body());
-                }
-
-                @Override
-                public void onFailure(Call<Float> call, Throwable throwable) {
-                    throwable.printStackTrace();
-                    apiCallBack.onError();
-                }
-            });
-        }catch (Exception e){
-            e.printStackTrace();
-        }
-    }
-
     public void getRatings(int id, final APICallBack apiCallBack){
         vgService.getVideogamesRatings(id).enqueue(new Callback<List<Float>>() {
             @Override
