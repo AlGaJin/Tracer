@@ -17,6 +17,8 @@ public interface VideogameService {
     Call<List<Videogame>> getAllVideogames();
     @GET(StructureService.GET_LATEST_VG)
     Call<List<Videogame>> getLatestVideogames();
+    @GET(StructureService.GET_FRIENDS_ACTIVITY)
+    Call<List<Videogame>> getFriendsActivity(@Path("userId") int userId);
     @GET(StructureService.GET_VG_BY_ID)
     Call<List<Videogame>> getVideogameById(@Path("id") int vgId);
     @GET(StructureService.GET_VG_STORES)
@@ -25,5 +27,7 @@ public interface VideogameService {
     Call<List<Platform>> getVideogamesPlatforms(@Path("id") int vgId);
     @GET(StructureService.GET_VG_RATINGS)
     Call<List<Float>> getVideogamesRatings(@Path("id") int vgId);
+    @GET(StructureService.GET_USER_GAME_LIST)
+    Call<List<Videogame>> getUserGameList(@Path("userId") int userId, @Path("list") String list);
 
 }

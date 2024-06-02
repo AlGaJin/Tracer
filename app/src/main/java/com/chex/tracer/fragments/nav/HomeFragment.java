@@ -10,7 +10,8 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.chex.tracer.R;
-import com.chex.tracer.adapters.viewpager.ScreenSlideVPAdapter;
+import com.chex.tracer.activities.MainActivity;
+import com.chex.tracer.adapters.viewpager.HomeVPAdapter;
 import com.google.android.material.tabs.TabLayout;
 import com.google.android.material.tabs.TabLayoutMediator;
 
@@ -21,11 +22,11 @@ public class HomeFragment extends Fragment {
                              Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_home, container, false);
 
-        ViewPager2 viewPager2 = v.findViewById(R.id.viewPager);
-        ScreenSlideVPAdapter adapter = new ScreenSlideVPAdapter(getActivity());
+        ViewPager2 viewPager2 = v.findViewById(R.id.home_viewPager);
+        HomeVPAdapter adapter = new HomeVPAdapter(getActivity());
         viewPager2.setAdapter(adapter);
 
-        TabLayout tabLayout = v.findViewById(R.id.tabContainer);
+        TabLayout tabLayout = v.findViewById(R.id.home_tabContainer);
         new TabLayoutMediator(tabLayout, viewPager2, (tab, position) -> {
             String[] tabNames = new String[]{
                     getString(R.string.videogames),

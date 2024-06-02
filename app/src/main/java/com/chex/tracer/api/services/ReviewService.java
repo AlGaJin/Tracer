@@ -15,8 +15,12 @@ public interface ReviewService {
     //Llamadas GET
     @GET(StructureService.BASE_REVIEW)
     Call<List<Review>> getAllReviews();
+    @GET(StructureService.GET_USER_REVIEWS)
+    Call<List<Review>> getUserReviews(@Path("userId") int userId);
     @GET(StructureService.GET_REVIEW)
     Call<Review> getReview(@Path("gameId") int gameId, @Path("userId") int userId);
+    @GET(StructureService.GET_LATEST_REVIEWS)
+    Call<List<Review>> getLatestReviews();
 
     //Llamadas PUT
     @PUT(StructureService.UPDATE_REVIEW)

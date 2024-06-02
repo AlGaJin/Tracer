@@ -16,13 +16,19 @@
 
         <item name="bottomSheetDialogTheme">@style/MyDialogStyle</item>
 
-        <item name="highLighted">@color/darkAccent</item>
+        <item name="highLighted">#CF2839</item>
         <item name="contrastBackGround">#72FFFFFF</item>
     </style>
 
     <style name="MyBtnStyle" parent="">
         <item name="backgroundTint">@color/lightAccent</item>
         <item name="android:textColor">@color/primaryDark</item>
+    </style>
+
+    <style name="MyProgressBar" parent="">
+        <item name="android:background">?android:attr/colorPrimary</item>
+        <item name="android:indeterminateDrawable">@drawable/ui_charging</item>
+        <item name="android:padding">135dp</item>
     </style>
 
     <style name="HighLightText" parent="">
@@ -44,7 +50,7 @@
         <item name="tabIndicatorColor">@color/darkAccent</item>
         <item name="tabIndicatorHeight">1.5dp</item>
         <item name="tabIndicatorFullWidth">true</item>
-        <item name="tabIndicatorAnimationMode">fade</item>
+        <item name="tabIndicatorAnimationMode">elastic</item>
     </style>
 
     <style name="MySideNav" parent="">
@@ -77,5 +83,20 @@
         <item name="android:progressBackgroundTint">@color/rating_selector</item>
     </style>
 
+    <style name="MySmallRatingBar" parent="Widget.AppCompat.RatingBar.Small">
+        <item name="android:progressTint">?attr/highLighted</item>
+        <item name="android:numStars">5</item>
+        <item name="android:stepSize">0.5</item>
+        <item name="android:secondaryProgressTint">?attr/colorPrimaryDark</item>
+        <item name="android:progressBackgroundTint">@color/rating_selector</item>
+    </style>
+
+    <style name="MyAlertDialog" parent="Theme.Material3.DayNight.Dialog.Alert">
+        <item name="android:background">@color/lightAccent</item>
+        <item name="materialButtonStyle">@style/MyMaterialBtn</item>
+    </style>
+    <style name="MyMaterialBtn" parent="Widget.Material3.Button.TextButton.Dialog">
+        <item name="android:textColor">@color/darkAccent</item>
+    </style>
     <style name="Theme.Tracer" parent="Base.Theme.Tracer" />
 </resources>

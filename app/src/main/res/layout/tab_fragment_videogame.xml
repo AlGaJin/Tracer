@@ -6,6 +6,7 @@
     tools:context=".fragments.tab.VideogamesTabFragment">
     
     <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+        android:id="@+id/gamesTab_swipeRefresh"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
         <ScrollView
@@ -32,6 +33,7 @@
                         android:text="@string/latest_games" />
 
                     <TextView
+                        android:id="@+id/seeAllTxtV"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_weight="0"
@@ -46,17 +48,26 @@
                     />
 
                 <TextView
+                    android:id="@+id/friendsActivityTxtV"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:textSize="16sp"
+                    android:layout_margin="10dp"
                     android:text="@string/friends_activity"
-                    android:layout_margin="10dp"/>
+                    android:textSize="16sp" />
 
                 <androidx.recyclerview.widget.RecyclerView
-                    android:id="@+id/friendsActivity"
+                    android:id="@+id/friendsActivityRV"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent" />
+                    android:layout_height="230dp"
+                    />
             </LinearLayout>
         </ScrollView>
     </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+
+    <ProgressBar
+        android:id="@+id/gamesTabProgressBar"
+        style="@style/MyProgressBar"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="visible" />
 </FrameLayout>

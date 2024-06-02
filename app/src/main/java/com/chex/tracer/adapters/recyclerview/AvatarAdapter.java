@@ -5,7 +5,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.core.content.res.ResourcesCompat;
@@ -47,7 +46,7 @@ public class AvatarAdapter extends RecyclerView.Adapter<AvatarAdapter.ViewHolder
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.avatar_item, parent, false);
+        View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.rv_items_avatar, parent, false);
         return new ViewHolder(v);
     }
 

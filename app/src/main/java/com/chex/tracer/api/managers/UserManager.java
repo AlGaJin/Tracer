@@ -163,19 +163,26 @@ public class UserManager extends BaseManager {
         }
     }
 
-    public void getSocialMediaData(int userId, final APICallBack apiCallBack){
-        userService.getSocialMediaDataFrom(userId).enqueue(new Callback<List<String>>() {
-            @Override
-            public void onResponse(Call<List<String>> call, Response<List<String>> response) {
-                apiCallBack.onSuccess(response.body());
-            }
+    public void getSocialMediaData(int userReqId, int loggedUserId, final APICallBack apiCallBack){
+        try{
+            JSONObject params = new JSONObject();
+            params.put("userReqId", userReqId);
+            params.put("loggedUserId", loggedUserId);
+            userService.getSocialMediaDataFrom(createJSONRequestBody(params)).enqueue(new Callback<List<String>>() {
+                @Override
+                public void onResponse(Call<List<String>> call, Response<List<String>> response) {
+                    apiCallBack.onSuccess(response.body());
+                }
 
-            @Override
-            public void onFailure(Call<List<String>> call, Throwable throwable) {
-                throwable.printStackTrace();
-                apiCallBack.onError();
-            }
-        });
+                @Override
+                public void onFailure(Call<List<String>> call, Throwable throwable) {
+                    throwable.printStackTrace();
+                    apiCallBack.onError();
+                }
+            });
+        }catch (Exception e){
+            e.printStackTrace();
+        }
     }
 
     public void updateUser(int userId, String newUsername, String newEmail, String descr, String newProfilePic,final APICallBack apiCallBack){
@@ -226,27 +233,18 @@ public class UserManager extends BaseManager {
         }
     }
 
-    public void isFollowing(int followerId, int followedId, final APICallBack apiCallBack){
+    public void changeFollowStatus(int followerId, int followedId){
         try{
             JSONObject params = new JSONObject();
             params.put("followerId", followerId);
             params.put("followedId", followedId);
 
-            userService.isFollowing(createJSONRequestBody(params)).enqueue(new Callback<Boolean>() {
+            userService.changeFollowStatus(createJSONRequestBody(params)).enqueue(new Callback<Void>() {
                 @Override
-                public void onResponse(Call<Boolean> call, Response<Boolean> response) {
-                    if(response.body() != null){
-                       apiCallBack.onSuccess(response.body());
-                    }else{
-                        apiCallBack.onSuccess(false);
-                    }
-                }
+                public void onResponse(Call<Void> call, Response<Void> response) {}
 
                 @Override
-                public void onFailure(Call<Boolean> call, Throwable throwable) {
-                    throwable.printStackTrace();
-                    apiCallBack.onError();
-                }
+                public void onFailure(Call<Void> call, Throwable throwable) {throwable.printStackTrace();}
             });
         }catch (Exception e){
             e.printStackTrace();

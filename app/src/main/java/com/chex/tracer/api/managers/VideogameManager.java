@@ -62,6 +62,25 @@ public class VideogameManager extends BaseManager {
         }
     }
 
+    public void getFriendsActivity(int userId, final APICallBack apiCallBack){
+        try {
+            vgService.getFriendsActivity(userId).enqueue(new Callback<List<Videogame>>() {
+                @Override
+                public void onResponse(Call<List<Videogame>> call, Response<List<Videogame>> response) {
+                    apiCallBack.onSuccess(response.body());
+                }
+
+                @Override
+                public void onFailure(Call<List<Videogame>> call, Throwable throwable) {
+                    throwable.printStackTrace();
+                    apiCallBack.onError();
+                }
+            });
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+    }
+
     public void getById(int id, final APICallBack apiCallBack){
         try {
             vgService.getVideogameById(id).enqueue(new Callback<List<Videogame>>() {
@@ -128,6 +147,21 @@ public class VideogameManager extends BaseManager {
 
             @Override
             public void onFailure(Call<List<Float>> call, Throwable throwable) {
+                throwable.printStackTrace();
+                apiCallBack.onError();
+            }
+        });
+    }
+
+    public void getUserGameList(int userId, String list, final APICallBack apiCallBack){
+        vgService.getUserGameList(userId, list).enqueue(new Callback<List<Videogame>>() {
+            @Override
+            public void onResponse(Call<List<Videogame>> call, Response<List<Videogame>> response) {
+                apiCallBack.onSuccess(response.body());
+            }
+
+            @Override
+            public void onFailure(Call<List<Videogame>> call, Throwable throwable) {
                 throwable.printStackTrace();
                 apiCallBack.onError();
             }

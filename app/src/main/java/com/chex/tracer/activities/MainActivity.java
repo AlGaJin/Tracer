@@ -9,7 +9,6 @@ import androidx.core.content.res.ResourcesCompat;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.preference.PreferenceManager;
 
@@ -22,16 +21,17 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
+import android.widget.Toast;
 
 import com.chex.tracer.R;
 import com.chex.tracer.api.APICallBack;
 import com.chex.tracer.api.managers.UserManager;
 import com.chex.tracer.api.models.User;
-import com.chex.tracer.api.models.Videogame;
 import com.chex.tracer.fragments.nav.HomeFragment;
 import com.chex.tracer.fragments.nav.ProfileFragment;
-import com.chex.tracer.fragments.nav.SettingsFragment;
+import com.chex.tracer.fragments.nav.SearchFragment;
 import com.chex.tracer.fragments.others.EditProfileFragment;
+import com.chex.tracer.fragments.others.GameGalleryFragment;
 import com.chex.tracer.fragments.others.ReviewFragment;
 import com.chex.tracer.fragments.others.VideogameDetailFragment;
 import com.chex.tracer.utils.UserViewModel;
@@ -70,7 +70,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         flag = true;
 
         profilePic = findViewById(R.id.toolbar_userProfilePic);
-        profilePic.setOnClickListener(view -> changeNavFragment(getFragment(addDeque(R.id.nav_profile), bundle), R.id.nav_profile));
+        profilePic.setOnClickListener(view -> changeNavFragment(getFragment(addDeque(R.id.nav_profile), null), R.id.nav_profile));
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         Objects.requireNonNull(getSupportActionBar()).setDisplayShowTitleEnabled(false);
@@ -90,13 +90,13 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         getOnBackPressedDispatcher().addCallback(this, new OnBackPressedCallback(true) {
             @Override
             public void handleOnBackPressed() {
-                accionBack(bundle);
+                actionBack(bundle);
             }
         });
 
         toolbar.setNavigationOnClickListener(view -> {
             if (!toggle.isDrawerIndicatorEnabled()) {
-                accionBack(bundle);
+                getOnBackPressedDispatcher().onBackPressed();
             } else {
                 drawerLayout.openDrawer(GravityCompat.START);
             }
@@ -105,16 +105,13 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     private void isLogged() {
         String userId = preferences.getString("userId", null);
-
         if(userId != null && !userId.isEmpty()){
             new UserManager().getUser(Integer.parseInt(userId), new APICallBack() {
                 @Override
                 public void onSuccess(Object obj) {
                     userViewModel.setLoggedUser((User)obj);
-
-                    setProfilePic(userViewModel.getLoggedUser().getProfile_pic());
-
                     mainPB.setVisibility(View.GONE);
+                    setProfilePic(userViewModel.getLoggedUser().getProfile_pic());
                 }
 
                 @Override
@@ -158,10 +155,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         } else if(id == R.id.nav_profile){
             fgt = new ProfileFragment();
             showHamburgerBtn(false);
-        } else if(id == R.id.nav_settings) {
-            fgt = new SettingsFragment();
+        } else if(id == R.id.nav_search) {
+            fgt = new SearchFragment();
             showHamburgerBtn(false);
-        } else if (id == 1) {
+        }else if (id == 1) {
             fgt = new VideogameDetailFragment();
             showHamburgerBtn(false);
         }else if (id == 2){
@@ -170,13 +167,16 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         }else if (id == 3){
             fgt = new EditProfileFragment();
             showHamburgerBtn(false);
+        }else if (id == 4){
+            fgt = new GameGalleryFragment();
+            showHamburgerBtn(false);
         }
 
         fgt.setArguments(bundle);
         return fgt;
     }
 
-    public void accionBack(Bundle bundle){
+    public void actionBack(Bundle bundle){
         if (drawerLayout.isOpen()) {
             drawerLayout.close();
         } else {
@@ -190,9 +190,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     }
 
     private Fragment getVisibleFragment(){
-
-        List<Fragment> fragmentos = getSupportFragmentManager().getFragments();
-        for (Fragment f : fragmentos)
+        List<Fragment> fragmets = getSupportFragmentManager().getFragments();
+        for (Fragment f : fragmets)
             if(f.isVisible()) return f;
 
         return null;
@@ -207,12 +206,20 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         Menu menu = navView.getMenu();
         for (int i = 0; i < menu.size(); i++) {
             MenuItem item = menu.getItem(i);
-            if(itemId == item.getItemId()){
+            if(itemId == item.getItemId() && isLoggedUser(itemId)){
                 item.setChecked(true);
             }else{
                 item.setChecked(false);
             }
         }
+    }
+
+    private boolean isLoggedUser(int id) {
+        if(bundle != null && bundle.containsKey("user") && id == R.id.nav_profile){
+            User parcelabledUser = bundle.getParcelable("user");
+            return userViewModel.getLoggedUser().getId() == parcelabledUser.getId();
+        }
+        return true;
     }
 
     public void showHamburgerBtn(boolean enabled) {
@@ -231,6 +238,18 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         int itemId = item.getItemId();
 
         drawerLayout.close();
+
+        //Si se activa el profile del Navegador lateral desde un perfil de otro usuario,
+        // se cambia al perfil del usuario que ha iniciado sesión
+        if(itemId == R.id.nav_profile && !item.isChecked()){
+            getSupportFragmentManager().beginTransaction()
+                    .replace(R.id.fragment_container, new ProfileFragment()).commit();
+            item.setChecked(true);
+            addDeque(R.id.nav_profile);
+            showHamburgerBtn(false);
+            return true;
+        }
+
         changeNavFragment(getFragment(addDeque(itemId), bundle), itemId);
         return true;
     }

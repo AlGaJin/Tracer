@@ -39,7 +39,7 @@
         <item name="tabIndicatorGravity">bottom</item>
         <item name="tabIndicatorColor">@color/darkAccent</item>
         <item name="tabIndicatorHeight">1.5dp</item>
-        <item name="tabIndicatorFullWidth">false</item>
+        <item name="tabIndicatorFullWidth">true</item>
         <item name="tabIndicatorAnimationMode">fade</item>
     </style>
 
@@ -71,5 +71,21 @@
         <item name="android:numStars">5</item>
         <item name="android:stepSize">0.5</item>
         <item name="android:progressBackgroundTint">@color/rating_selector</item>
+    </style>
+
+    <style name="MySmallRatingBar" parent="Widget.AppCompat.RatingBar.Small">
+        <item name="android:progressTint">?attr/highLighted</item>
+        <item name="android:secondaryProgressTint">#E69BA4</item>
+        <item name="android:numStars">5</item>
+        <item name="android:stepSize">0.5</item>
+        <item name="android:progressBackgroundTint">@color/rating_selector</item>
+    </style>
+
+    <style name="MyAlertDialog" parent="Theme.Material3.DayNight.Dialog.Alert">
+        <item name="android:background">@color/burgundy</item>
+        <item name="materialButtonStyle">@style/MyMaterialBtn</item>
+    </style>
+    <style name="MyMaterialBtn" parent="Widget.Material3.Button.TextButton.Dialog">
+        <item name="android:textColor">@color/lightAccent</item>
     </style>
 </resources>

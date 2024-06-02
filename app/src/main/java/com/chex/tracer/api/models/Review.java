@@ -8,28 +8,28 @@ import androidx.annotation.NonNull;
 import java.sql.Timestamp;
 
 public class Review implements Parcelable {
-    private int user_id;
-    private int videogame_id;
+    private User user;
+    private Videogame videogame;
     private float rate;
     private String review;
     private Timestamp creation_date;
 
     public Review(){}
 
-    public int getUser_id() {
-        return user_id;
+    public User getUser() {
+        return user;
     }
 
-    public void setUser_id(int user_id) {
-        this.user_id = user_id;
+    public void setUser(User user) {
+        this.user = user;
     }
 
-    public int getVideogame_id() {
-        return videogame_id;
+    public Videogame getVideogame() {
+        return videogame;
     }
 
-    public void setVideogame_id(int videogame_id) {
-        this.videogame_id = videogame_id;
+    public void setVideogame(Videogame videogame) {
+        this.videogame = videogame;
     }
 
     public float getRate() {
@@ -58,8 +58,8 @@ public class Review implements Parcelable {
 
     // Métodos Parcelable
     protected Review(Parcel in) {
-        user_id = in.readInt();
-        videogame_id = in.readInt();
+        user = in.readParcelable(User.class.getClassLoader());
+        videogame = in.readParcelable(Videogame.class.getClassLoader());
         rate = in.readFloat();
         review = in.readString();
         creation_date = new Timestamp(in.readLong());
@@ -67,8 +67,8 @@ public class Review implements Parcelable {
 
     @Override
     public void writeToParcel(@NonNull Parcel dest, int i) {
-        dest.writeInt(user_id);
-        dest.writeInt(videogame_id);
+        dest.writeParcelable(user, i);
+        dest.writeParcelable(videogame, i);
         dest.writeFloat(rate);
         dest.writeString(review);
         dest.writeLong(creation_date != null ? creation_date.getTime() : -1);
@@ -78,4 +78,16 @@ public class Review implements Parcelable {
     public int describeContents() {
         return 0;
     }
+
+    public static final Creator<Review> CREATOR = new Creator<Review>() {
+        @Override
+        public Review createFromParcel(Parcel in) {
+            return new Review(in);
+        }
+
+        @Override
+        public Review[] newArray(int size) {
+            return new Review[size];
+        }
+    };
 }

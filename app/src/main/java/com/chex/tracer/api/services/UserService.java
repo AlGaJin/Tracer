@@ -23,8 +23,6 @@ public interface UserService {
     Call<Boolean> isUsernameAvailable(@Path("username") String username);
     @GET(StructureService.IS_EMAIL_AVAILABLE)
     Call<Boolean> isEmailAvailable(@Path("email") String email);
-    @GET(StructureService.SOCIAL_MEDIA_DATA)
-    Call<List<String>> getSocialMediaDataFrom(@Path("id") int userId);
     @GET(StructureService.USER_GAME_DATA)
     Call<List<Boolean>> getGameDataFrom(@Path("userId") int userId, @Path("gameId") int gameId);
 
@@ -33,12 +31,14 @@ public interface UserService {
     Call<String> login(@Body RequestBody params);
     @POST(StructureService.SIGNUP)
     Call<String> signup(@Body RequestBody params);
-    @POST(StructureService.IS_FOLLOWING)
-    Call<Boolean> isFollowing(@Body RequestBody params);
+    @POST(StructureService.SOCIAL_MEDIA_DATA)
+    Call<List<String>> getSocialMediaDataFrom(@Body RequestBody params);
 
     //Llamadas PUT
     @PUT(StructureService.EDIT_USER)
     Call<Boolean> editUser(@Body RequestBody params);
+    @PUT(StructureService.CHANGE_FOLLOW_STATUS)
+    Call<Void> changeFollowStatus(@Body RequestBody params);
     @PUT(StructureService.UPDATE_GAME_DATA)
     Call<Void> updateGameData(@Body RequestBody params);
 

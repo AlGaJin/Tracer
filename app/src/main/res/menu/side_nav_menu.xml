@@ -11,12 +11,12 @@
             android:icon="@drawable/nav_home"
             android:title="@string/home"/>
         <item
+            android:id="@+id/nav_search"
+            android:icon="@drawable/ui_search"
+            android:title="@string/search"/>
+        <item
             android:id="@+id/nav_profile"
             android:icon="@drawable/avatar_default"
             android:title="@string/profile"/>
-        <item
-            android:id="@+id/nav_settings"
-            android:icon="@drawable/nav_settings"
-            android:title="@string/settings"/>
     </group>
 </menu>

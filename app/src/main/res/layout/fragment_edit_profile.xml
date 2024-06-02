@@ -51,7 +51,7 @@
             android:layout_marginStart="10dp"
             android:layout_marginEnd="10dp"
             android:ems="10"
-            android:hint="Change username"
+            android:hint="@string/change_username"
             android:inputType="text"
             android:minHeight="48dp" />
 
@@ -63,7 +63,7 @@
             android:layout_marginTop="5dp"
             android:layout_marginEnd="10dp"
             android:ems="10"
-            android:hint="Change e-mail"
+            android:hint="@string/change_email"
             android:inputType="textEmailAddress"
             android:minHeight="48dp" />
 
@@ -76,7 +76,7 @@
             android:layout_marginEnd="10dp"
             android:ems="10"
             android:gravity="start|top"
-            android:hint="Say something cool about you!"
+            android:hint="@string/descr_hint"
             android:inputType="textMultiLine"
             android:minHeight="48dp" />
 
@@ -86,7 +86,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="bottom"
-            android:text="Save changes" />
+            android:text="@string/save_changes" />
 
     </LinearLayout>
 </FrameLayout>

@@ -1,37 +1,31 @@
 package com.chex.tracer.fragments.others;
 
 import android.animation.LayoutTransition;
-import android.graphics.Color;
-import android.media.Image;
+import android.app.AlertDialog;
 import android.os.Bundle;
 
-import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.content.res.ResourcesCompat;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
-import androidx.recyclerview.widget.GridLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 
 import android.text.Spanned;
-import android.util.Log;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.RatingBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.chex.tracer.R;
 import com.chex.tracer.activities.MainActivity;
-import com.chex.tracer.adapters.recyclerview.AvatarAdapter;
 import com.chex.tracer.api.APICallBack;
 import com.chex.tracer.api.managers.ReviewManager;
 import com.chex.tracer.api.managers.UserManager;
@@ -42,18 +36,14 @@ import com.chex.tracer.api.models.Videogame;
 import com.chex.tracer.utils.UserViewModel;
 import com.github.lzyzsd.circleprogress.CircleProgress;
 import com.github.mikephil.charting.charts.BarChart;
-import com.github.mikephil.charting.components.XAxis;
-import com.github.mikephil.charting.components.YAxis;
 import com.github.mikephil.charting.data.BarData;
 import com.github.mikephil.charting.data.BarDataSet;
 import com.github.mikephil.charting.data.BarEntry;
 import com.github.mikephil.charting.data.Entry;
-import com.github.mikephil.charting.formatter.ValueFormatter;
 import com.github.mikephil.charting.highlight.Highlight;
 import com.github.mikephil.charting.listener.ChartTouchListener;
 import com.github.mikephil.charting.listener.OnChartGestureListener;
 import com.github.mikephil.charting.listener.OnChartValueSelectedListener;
-import com.github.mikephil.charting.utils.ColorTemplate;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.android.material.divider.MaterialDivider;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -84,8 +74,9 @@ public class VideogameDetailFragment extends Fragment {
     private Videogame game;
     private Review review;
 
+    private int totalRates = 0;
+    private float totalRating = 0;
     private float averageRating = 0;
-    private int totalRates = 1;
     private boolean isCollapsed = true;
 
     private TextView titleTxtV, descrTxtV, releasedTxtV, metacriticTxtV, ratingTxtV, totalRatingsTxtV;
@@ -99,6 +90,7 @@ public class VideogameDetailFragment extends Fragment {
     private CheckBox playedCheckBox, playingCheckBox, backlogCheckBox;
     private View sheetView;
     private BarChart ratingBarChart;
+    private ProgressBar pb;
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
@@ -114,9 +106,10 @@ public class VideogameDetailFragment extends Fragment {
         Bundle bundle = getArguments();
         if(bundle != null){
             game = bundle.getParcelable("videogame");
+            review = bundle.getParcelable("review");
         }else{
             Toast.makeText(requireContext(), "Game details cannot be loaded", Toast.LENGTH_SHORT).show();
-            ((MainActivity) requireActivity()).accionBack(null);
+            ((MainActivity) requireActivity()).actionBack(null);
         }
 
         gameImgBackground = v.findViewById(R.id.gameImgBackground);
@@ -130,6 +123,7 @@ public class VideogameDetailFragment extends Fragment {
         optionsFab = v.findViewById(R.id.optionsFab);
         ratingTxtV = v.findViewById(R.id.ratingTxtV);
         ratingBarChart = v.findViewById(R.id.ratingBarChart);
+        pb = v.findViewById(R.id.gameDetailProgressBar);
 
         totalRatingsImgV = v.findViewById(R.id.totalRatingsImgV);
         totalRatingsTxtV = v.findViewById(R.id.totalRatingsTxtV);
@@ -142,7 +136,6 @@ public class VideogameDetailFragment extends Fragment {
         bottomSheetDialog = new BottomSheetDialog(requireContext());
         sheetView = LayoutInflater.from(requireContext()).inflate(R.layout.dialog_game_options, null);
         bottomSheetDialog.setContentView(sheetView);
-
 
         setGameData();
         setGameOptionData();
@@ -163,6 +156,8 @@ public class VideogameDetailFragment extends Fragment {
                 if(obj != null){
                     processRatings((List<Float>) obj);
                 }
+                pb.setVisibility(View.GONE);
+                optionsFab.setVisibility(View.VISIBLE);
             }
 
             @Override
@@ -195,7 +190,6 @@ public class VideogameDetailFragment extends Fragment {
         }
 
         if(game.getReleased() != null){
-
             releasedTxtV.setText(getYear(game.getReleased()));
         }
 
@@ -270,6 +264,8 @@ public class VideogameDetailFragment extends Fragment {
             float oldV = review.getRate();
             if(v > 0){
                 playedCheckBox.setChecked(true);
+                playingCheckBox.setChecked(false);
+                backlogCheckBox.setChecked(false);
             }
             if(v != oldV){
                 updateChartValue(oldV, v);
@@ -278,16 +274,46 @@ public class VideogameDetailFragment extends Fragment {
         });
 
         sheetView.findViewById(R.id.addReview).setOnClickListener(view ->{
-            Bundle bundle = new Bundle();
-            bundle.putParcelable("videogame", game);
-            bundle.putParcelable("review", review);
-            ((MainActivity)requireActivity()).changeFragmentWithBundle(2, bundle);
-            bottomSheetDialog.dismiss();
+            if(playedCheckBox.isChecked()){
+                Bundle bundle = new Bundle();
+                bundle.putParcelable("videogame", game);
+                bundle.putParcelable("review", review);
+                ((MainActivity)requireActivity()).changeFragmentWithBundle(2, bundle);
+                bottomSheetDialog.dismiss();
+            }else{
+                new AlertDialog.Builder(requireContext(), R.style.MyAlertDialog)
+                        .setTitle(R.string.have_you_played_it)
+                        .setMessage(R.string.alert_dont_played_msg)
+                        .setNegativeButton(R.string.ok, (anotherOne, i) ->{
+                            bottomSheetDialog.show();
+                        })
+                        .show();
+            }
         });
 
         bottomSheetDialog.setOnDismissListener(dialogInterface -> {
-            userManager.updateGameData(userId, game.getId(),
-                playedCheckBox.isChecked(), playingCheckBox.isChecked(), backlogCheckBox.isChecked(), ratingBar.getRating());
+            float rate = ratingBar.getRating();
+            if(rate == 0 && review.getReview() != null && !review.getReview().isEmpty()){
+                new AlertDialog.Builder(requireContext(), R.style.MyAlertDialog)
+                        .setTitle(R.string.delete)
+                        .setMessage(R.string.alert_delete_msg)
+                        .setPositiveButton(R.string.delete, (otherDialogInterface, i) -> {
+                            review.setReview("");
+                            userManager.updateGameData(userId, game.getId(),
+                                    playedCheckBox.isChecked(), playingCheckBox.isChecked(), backlogCheckBox.isChecked(), ratingBar.getRating());
+                        })
+                        .setNegativeButton(R.string.cancel, (anotherOne, i) ->{
+                            bottomSheetDialog.show();
+                        })
+                        .setOnDismissListener(dialogInterface1 -> {
+                            bottomSheetDialog.show();
+                        })
+                        .show();
+            }else{
+                userManager.updateGameData(userId, game.getId(),
+                        playedCheckBox.isChecked(), playingCheckBox.isChecked(), backlogCheckBox.isChecked(), ratingBar.getRating());
+            }
+
         });
 
         userManager.getUserGameData(userId, game.getId(), new APICallBack() {
@@ -331,11 +357,18 @@ public class VideogameDetailFragment extends Fragment {
         if(oldV != 0){
             Entry oldEntry = dataSet.getEntryForXValue(oldV, Float.NaN);
             oldEntry.setY(oldEntry.getY()-1);
+            totalRating -= oldV;
+        }else{
+            totalRates++;
         }
+
         //Aumento la entrada nueva
         if(newV != 0){
             Entry newEntry = dataSet.getEntryForXValue(newV, Float.NaN);
             newEntry.setY(newEntry.getY()+1);
+            totalRating += newV;
+        }else{
+            totalRates--;
         }
 
         data.notifyDataChanged();
@@ -343,13 +376,13 @@ public class VideogameDetailFragment extends Fragment {
         ratingBarChart.invalidate();
 
         //Calculos para la nueva media
-        averageRating = averageRating+((newV-oldV)/totalRates);
-        ratingTxtV.setText(String.valueOf(averageRating));
+        averageRating = totalRating/totalRates;
+        String toShow = "" + (Float.isNaN(averageRating) ? 0f: Math.round(averageRating * 10.0) / 10.0);
+        ratingTxtV.setText(toShow);
     }
     private void processRatings(List<Float> ratings) {
         try {
             Map<Float, Integer> ratingCounts = new HashMap<>();
-            float totalRating = 0;
 
             for (float rating : ratings) {
                 totalRating += rating;
@@ -363,8 +396,8 @@ public class VideogameDetailFragment extends Fragment {
                 totalRates = ratings.size();
                 averageRating = totalRating / ratings.size();
             }
-
-            ratingTxtV.setText(String.valueOf(totalRating));
+            String toShow = "" + (Float.isNaN(averageRating) ? 0f: Math.round(averageRating * 10.0) / 10.0);
+            ratingTxtV.setText(toShow);
 
             List<BarEntry> entries = new ArrayList<>();
             for (float i = 0.5f; i <= 5; i = i+0.5f) {
@@ -462,7 +495,8 @@ public class VideogameDetailFragment extends Fragment {
         totalRatingsImgV.setVisibility(View.GONE);
         totalRatingsTxtV.setVisibility(View.GONE);
         totalRatingsDivider.setVisibility(View.GONE);
-        ratingTxtV.setText(String.valueOf(averageRating));
+        String toShow = "" + (Float.isNaN(averageRating) ? 0f: Math.round(averageRating * 10.0) / 10.0);
+        ratingTxtV.setText(toShow);
     }
 
     private void setPlatforms(List<Platform> platforms){

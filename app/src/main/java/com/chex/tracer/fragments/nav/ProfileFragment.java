@@ -4,35 +4,49 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 
+import androidx.activity.OnBackPressedCallback;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.ActionBar;
 import androidx.core.content.res.ResourcesCompat;
+import androidx.core.view.MenuProvider;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.lifecycle.ViewModelStoreOwner;
 import androidx.preference.PreferenceManager;
+import androidx.viewpager2.widget.ViewPager2;
 
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.chex.tracer.R;
 import com.chex.tracer.activities.LogInActivity;
 import com.chex.tracer.activities.MainActivity;
+import com.chex.tracer.adapters.viewpager.HomeVPAdapter;
+import com.chex.tracer.adapters.viewpager.UserVPAdapter;
 import com.chex.tracer.api.APICallBack;
 import com.chex.tracer.api.managers.UserManager;
 import com.chex.tracer.api.models.User;
 import com.chex.tracer.fragments.others.EditProfileFragment;
 import com.chex.tracer.utils.UserViewModel;
+import com.google.android.material.tabs.TabLayout;
+import com.google.android.material.tabs.TabLayoutMediator;
 
 import java.util.List;
 
 public class ProfileFragment extends Fragment {
     private final UserManager userManager = new UserManager();
-    private TextView usernameTxtV, descrTxtV, followingTxtV, followersTxtV, totalGamesTxtV;
+    private TextView usernameTxtV, descrTxtV, followingTxtV, followersTxtV;
     private ImageView profilePicImgV;
-    private Button leftBtn, rightBtn;
+    private Button followBtn;
     private User user;
 
     @Override
@@ -44,63 +58,58 @@ public class ProfileFragment extends Fragment {
         descrTxtV = v.findViewById(R.id.descrTxtV);
         followingTxtV = v.findViewById(R.id.followingTxtV);
         followersTxtV = v.findViewById(R.id.followersTxtV);
-        totalGamesTxtV = v.findViewById(R.id.totalGamesTxtV);
         profilePicImgV = v.findViewById(R.id.fgt_profile_userProfilePic);
-        leftBtn = v.findViewById(R.id.leftBtn);
-        rightBtn = v.findViewById(R.id.rightBtn);
+        followBtn = v.findViewById(R.id.followBtn);
 
-        whoIsLogged();
+        whoIsIt();
+
+        ViewPager2 viewPager2 = v.findViewById(R.id.user_viewPager);
+        UserVPAdapter adapter = new UserVPAdapter(getActivity(), user);
+        viewPager2.setAdapter(adapter);
+
+        TabLayout tabLayout = v.findViewById(R.id.user_tabContainer);
+        new TabLayoutMediator(tabLayout, viewPager2, (tab, position) -> {
+            String[] tabNames = new String[]{
+                    getString(R.string.videogames),
+                    getString(R.string.reviews)
+            };
+            tab.setText(tabNames[position]);
+        }).attach();
 
         return v;
     }
 
-    private void whoIsLogged() {
+    private void whoIsIt() {
         Bundle bundle = getArguments();
-        if(bundle != null && bundle.containsKey("userId")){
-            userManager.getUser(bundle.getInt("userId"), new APICallBack() {
-                @Override
-                public void onSuccess(Object obj) {
-                    user = (User) obj;
-                    setUserMediaData();
-                    isFollowing();
-                }
-
-                @Override
-                public void onError() {
-
-                }
-            });
-
-            rightBtn.setCompoundDrawablesWithIntrinsicBounds(0,0,R.drawable.ui_chat, 0);
-            rightBtn.setText("");
-            leftBtn.setText(R.string.follow);
-            leftBtn.setOnClickListener(view -> isFollowing());
+        User loggedUser = new ViewModelProvider(requireActivity()).get(UserViewModel.class).getLoggedUser();
+        if(bundle != null && bundle.containsKey("user") && ((User)bundle.getParcelable("user")).getId() != loggedUser.getId()){
+            user = bundle.getParcelable("user");
+            followBtn.setVisibility(View.VISIBLE);
+            followBtn.setOnClickListener(view -> changeFollowStatus());
         }else{
-            user = new ViewModelProvider(requireActivity()).get(UserViewModel.class).getLoggedUser();
-            setUserMediaData();
-            leftBtn.setOnClickListener(view -> ((MainActivity)requireActivity()).changeFragmentWithBundle(3, null));
-            rightBtn.setOnClickListener(view -> logOut());
+            user = loggedUser;
+            profilePicImgV.setOnClickListener(view -> ((MainActivity)requireActivity()).changeFragmentWithBundle(3, null));
         }
+
+        setUserMediaData();
     }
 
-    public void isFollowing(){
+
+
+    public void changeFollowStatus(){
         int followerId = new ViewModelProvider(requireActivity()).get(UserViewModel.class).getLoggedUser().getId();
         int followedId = user.getId();
-        userManager.isFollowing(followerId, followedId, new APICallBack() {
-            @Override
-            public void onSuccess(Object obj) {
-                if((Boolean)obj){
-                    leftBtn.setText(R.string.following);
-                }else{
-                    leftBtn.setText(R.string.follow);
-                }
-            }
+        int totalFollowers = Integer.parseInt(followersTxtV.getText().toString());
 
-            @Override
-            public void onError() {
+        if(followBtn.getText().equals(getString(R.string.follow))){
+            followBtn.setText(R.string.following);
+            followersTxtV.setText(String.valueOf(totalFollowers+1));
+        }else{
+            followBtn.setText(R.string.follow);
+            followersTxtV.setText(String.valueOf(totalFollowers-1));
+        }
 
-            }
-        });
+        userManager.changeFollowStatus(followerId, followedId);
     }
 
     private void setUserMediaData(){
@@ -113,29 +122,20 @@ public class ProfileFragment extends Fragment {
             e.printStackTrace();
         }
 
-        userManager.getSocialMediaData(user.getId(), new APICallBack() {
+        int loggedUserId = new ViewModelProvider(requireActivity()).get(UserViewModel.class).getLoggedUser().getId();
+        userManager.getSocialMediaData(user.getId(), loggedUserId,new APICallBack() {
             @Override
             public void onSuccess(Object obj) {
                 List<String> socialData = (List<String>) obj;
                 followersTxtV.setText(socialData.get(0));
                 followingTxtV.setText(socialData.get(1));
-                totalGamesTxtV.setText(socialData.get(2));
+                if(user.getId() != loggedUserId && socialData.get(3).equals("true")){
+                    followBtn.setText(R.string.following);
+                }
             }
 
             @Override
-            public void onError() {
-
-            }
+            public void onError() {}
         });
-    }
-
-    private void logOut(){
-        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(requireContext());
-        SharedPreferences.Editor editor = preferences.edit();
-        editor.putString("userId", "");
-        editor.apply();
-
-        startActivity(new Intent(this.getContext(), LogInActivity.class));
-        requireActivity().finish();
     }
 }

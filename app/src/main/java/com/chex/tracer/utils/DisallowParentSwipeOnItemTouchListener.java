@@ -19,7 +19,7 @@ public class DisallowParentSwipeOnItemTouchListener implements RecyclerView.OnIt
                 float deltaX = pointX - startPoint;
                 if (abs(deltaX) > 5f) {
                     if (deltaX > 0 && !rv.canScrollHorizontally(-1)) {
-                        rv.getParent().requestDisallowInterceptTouchEvent(false);
+                        rv.getParent().requestDisallowInterceptTouchEvent(true);
                     } else if (deltaX < 0 && !rv.canScrollHorizontally(1)) {
                         rv.getParent().requestDisallowInterceptTouchEvent(false);
                     } else {
