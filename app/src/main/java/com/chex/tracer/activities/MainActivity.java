@@ -250,8 +250,22 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             return true;
         }
 
+        if(itemId == R.id.nav_logOut){
+            logOut();
+        }
+
         changeNavFragment(getFragment(addDeque(itemId), bundle), itemId);
         return true;
+    }
+
+    public void logOut(){
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
+        SharedPreferences.Editor editor = preferences.edit();
+        editor.putString("userId", "");
+        editor.apply();
+
+        startActivity(new Intent(this, LogInActivity.class));
+        finish();
     }
 
     public void changeFragmentWithBundle(int fgtId, Bundle bundle) {
