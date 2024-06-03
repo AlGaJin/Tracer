@@ -107,65 +107,67 @@ public class VideogameDetailFragment extends Fragment {
         if(bundle != null){
             game = bundle.getParcelable("videogame");
             review = bundle.getParcelable("review");
+
+            gameImgBackground = v.findViewById(R.id.gameImgBackground);
+            dropImgV = v.findViewById(R.id.dropImgV);
+            platformLayout = v.findViewById(R.id.platformLayout);
+            metacriticScore = v.findViewById(R.id.metacriticScoreCircleProgress);
+            descrTxtV = v.findViewById(R.id.gameDescrMKTxtV);
+            titleTxtV = v.findViewById(R.id.gameTitleTxtV);
+            releasedTxtV = v.findViewById(R.id.releasedTxtV);
+            metacriticTxtV = v.findViewById(R.id.metacriticTxtV);
+            optionsFab = v.findViewById(R.id.optionsFab);
+            ratingTxtV = v.findViewById(R.id.ratingTxtV);
+            ratingBarChart = v.findViewById(R.id.ratingBarChart);
+            pb = v.findViewById(R.id.gameDetailProgressBar);
+
+            totalRatingsImgV = v.findViewById(R.id.totalRatingsImgV);
+            totalRatingsTxtV = v.findViewById(R.id.totalRatingsTxtV);
+            totalRatingsDivider = v.findViewById(R.id.totalRatingsDivider);
+
+            descrTxtV.setOnClickListener(view -> collapsaitor());
+            dropImgV.setOnClickListener(view -> collapsaitor());
+            optionsFab.setOnClickListener(view -> bottomSheetDialog.show());
+
+            bottomSheetDialog = new BottomSheetDialog(requireContext());
+            sheetView = LayoutInflater.from(requireContext()).inflate(R.layout.dialog_game_options, null);
+            bottomSheetDialog.setContentView(sheetView);
+
+            setGameData();
+            setGameOptionData();
+
+            videogameManager.getPlatforms(game.getId(), new APICallBack() {
+                @Override
+                public void onSuccess(Object obj) {
+                    if(isAdded()){
+                        setPlatforms((List<Platform>) obj);
+                    }
+                }
+                @Override
+                public void onError() {}
+            });
+            videogameManager.getRatings(game.getId(), new APICallBack() {
+                @Override
+                public void onSuccess(Object obj) {
+                    if(obj != null){
+                        processRatings((List<Float>) obj);
+                    }
+                    pb.setVisibility(View.GONE);
+                    optionsFab.setVisibility(View.VISIBLE);
+                }
+
+                @Override
+                public void onError() {
+                }
+            });
+
+            applyLayoutTransition();
         }else{
-            Toast.makeText(requireContext(), "Game details cannot be loaded", Toast.LENGTH_SHORT).show();
             ((MainActivity) requireActivity()).actionBack(null);
+            onDestroy();
         }
 
-        gameImgBackground = v.findViewById(R.id.gameImgBackground);
-        dropImgV = v.findViewById(R.id.dropImgV);
-        platformLayout = v.findViewById(R.id.platformLayout);
-        metacriticScore = v.findViewById(R.id.metacriticScoreCircleProgress);
-        descrTxtV = v.findViewById(R.id.gameDescrMKTxtV);
-        titleTxtV = v.findViewById(R.id.gameTitleTxtV);
-        releasedTxtV = v.findViewById(R.id.releasedTxtV);
-        metacriticTxtV = v.findViewById(R.id.metacriticTxtV);
-        optionsFab = v.findViewById(R.id.optionsFab);
-        ratingTxtV = v.findViewById(R.id.ratingTxtV);
-        ratingBarChart = v.findViewById(R.id.ratingBarChart);
-        pb = v.findViewById(R.id.gameDetailProgressBar);
 
-        totalRatingsImgV = v.findViewById(R.id.totalRatingsImgV);
-        totalRatingsTxtV = v.findViewById(R.id.totalRatingsTxtV);
-        totalRatingsDivider = v.findViewById(R.id.totalRatingsDivider);
-
-        descrTxtV.setOnClickListener(view -> collapsaitor());
-        dropImgV.setOnClickListener(view -> collapsaitor());
-        optionsFab.setOnClickListener(view -> bottomSheetDialog.show());
-
-        bottomSheetDialog = new BottomSheetDialog(requireContext());
-        sheetView = LayoutInflater.from(requireContext()).inflate(R.layout.dialog_game_options, null);
-        bottomSheetDialog.setContentView(sheetView);
-
-        setGameData();
-        setGameOptionData();
-
-        videogameManager.getPlatforms(game.getId(), new APICallBack() {
-            @Override
-            public void onSuccess(Object obj) {
-                if(isAdded()){
-                    setPlatforms((List<Platform>) obj);
-                }
-            }
-            @Override
-            public void onError() {}
-        });
-        videogameManager.getRatings(game.getId(), new APICallBack() {
-            @Override
-            public void onSuccess(Object obj) {
-                if(obj != null){
-                    processRatings((List<Float>) obj);
-                }
-                pb.setVisibility(View.GONE);
-                optionsFab.setVisibility(View.VISIBLE);
-            }
-
-            @Override
-            public void onError() {
-            }
-        });
-
-        applyLayoutTransition();
         return v;
     }
 

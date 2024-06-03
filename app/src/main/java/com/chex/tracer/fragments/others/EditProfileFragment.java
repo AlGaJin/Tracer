@@ -178,7 +178,7 @@ public class EditProfileFragment extends Fragment {
             userProfilePic.setTag(R.drawable.avatar_default);
             userProfilePic.setImageDrawable(ResourcesCompat.getDrawable(
                     view.getResources(), R.drawable.avatar_default, null));
-            bottomSheetDialog.hide();
+            bottomSheetDialog.dismiss();
         });
     }
 
