@@ -295,27 +295,28 @@ public class VideogameDetailFragment extends Fragment {
 
         bottomSheetDialog.setOnDismissListener(dialogInterface -> {
             float rate = ratingBar.getRating();
-            if(rate == 0 && review.getReview() != null && !review.getReview().isEmpty()){
-                new AlertDialog.Builder(requireContext(), R.style.MyAlertDialog)
-                        .setTitle(R.string.delete)
-                        .setMessage(R.string.alert_delete_msg)
-                        .setPositiveButton(R.string.delete, (otherDialogInterface, i) -> {
-                            review.setReview("");
-                            userManager.updateGameData(userId, game.getId(),
-                                    playedCheckBox.isChecked(), playingCheckBox.isChecked(), backlogCheckBox.isChecked(), ratingBar.getRating());
-                        })
-                        .setNegativeButton(R.string.cancel, (anotherOne, i) ->{
-                            bottomSheetDialog.show();
-                        })
-                        .setOnDismissListener(dialogInterface1 -> {
-                            bottomSheetDialog.show();
-                        })
-                        .show();
-            }else{
-                userManager.updateGameData(userId, game.getId(),
-                        playedCheckBox.isChecked(), playingCheckBox.isChecked(), backlogCheckBox.isChecked(), ratingBar.getRating());
+            if(isAdded()){
+                if(rate == 0 && review.getReview() != null && !review.getReview().isEmpty()){
+                    new AlertDialog.Builder(requireContext(), R.style.MyAlertDialog)
+                            .setTitle(R.string.delete)
+                            .setMessage(R.string.alert_delete_msg)
+                            .setPositiveButton(R.string.delete, (otherDialogInterface, i) -> {
+                                review.setReview("");
+                                userManager.updateGameData(userId, game.getId(),
+                                        playedCheckBox.isChecked(), playingCheckBox.isChecked(), backlogCheckBox.isChecked(), ratingBar.getRating());
+                            })
+                            .setNegativeButton(R.string.cancel, (anotherOne, i) ->{
+                                bottomSheetDialog.show();
+                            })
+                            .setOnDismissListener(dialogInterface1 -> {
+                                bottomSheetDialog.show();
+                            })
+                            .show();
+                }else{
+                    userManager.updateGameData(userId, game.getId(),
+                            playedCheckBox.isChecked(), playingCheckBox.isChecked(), backlogCheckBox.isChecked(), ratingBar.getRating());
+                }
             }
-
         });
 
         userManager.getUserGameData(userId, game.getId(), new APICallBack() {
